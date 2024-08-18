@@ -1,7 +1,31 @@
-statement:assignment|expr|if_statement
-expr:expr'+'term|expr'-'term|term
-term:term'*'atom|term'/'atom|atom
-atom:NAME|NUMBER|'('expr')'
-assignment:target'='expr
-target:NAME
-if_statement:'if'expr':'statement
+grammar[Grammar]:
+    | rules EOF { Grammar { rules } }
+
+rules[Vec<Rule>]:
+    | rule rules { chain!(rules, rule) }
+    | rule  { vec![rule] }
+
+rule[Rule]:
+    | NAME "[" NATIVE "]" ":" alter { Rule { name, native, alters } }
+    | NAME "[" NATIVE "]" ":" "|" alters { Rule { name, native, alters } }
+
+alters[Vec<Alter>]:
+    | alter "|" alters { chain!(alters, alter) }
+    | alter { vec![alter] }
+
+alter[Alter]:
+    | items "{" INLINE "}" { Alter { items, inline } }
+
+items[Vec<Item>]:
+    | item items { chain!(items, item) }
+    | item { vec![item] }
+
+item[Item]:
+    | atom ? { Item::Optional(atom) }
+    | atom * { Item::LoopZero(atom) }
+    | atom + { Item::LoopOnce(atom) }
+    | atom { Item::Exact(atom) }
+
+atom[Atom]:
+    | NAME { Atom::Name(name) }
+    | STRING { Atom::Name(string) }
