@@ -18,8 +18,8 @@ impl Generate for Atom {
 impl Debug for Atom {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Atom::String(_) => todo!(),
-            Atom::Name(_) => todo!()
+            Atom::String(s) => write!(f, "\"{}\"", s),
+            Atom::Name(s) => write!(f, "{}", s),
         }
     }
 }

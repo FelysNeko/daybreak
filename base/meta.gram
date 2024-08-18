@@ -1,0 +1,15 @@
+grammar[Grammar]:
+    | rules+ EOF { Grammar { rules } }
+
+rule[Rule]:
+    | NAME RSTYPE SEMICOL NEWLINE (SPACE SPACE SPACE SPACE PIPE SPACE alter NEWLINE)+ NEWLINE { Rule { name, rstype, alters } }
+
+alter[Alter]:
+    | (item SPACE)+ INLINE { Alter { items, inline } }
+
+item[Item]:
+    | atom { Item::Exact(atom) }
+
+atom[Atom]:
+    | STRING { Atom::String(string) }
+    | NAME { Atom::Name(name) }

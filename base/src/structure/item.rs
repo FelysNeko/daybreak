@@ -22,10 +22,10 @@ impl Generate for Item {
 impl Debug for Item {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Item::Optional(_) => todo!(),
-            Item::LoopZero(_) => todo!(),
-            Item::LoopOnce(_) => todo!(),
-            Item::Exact(_) => todo!(),
+            Item::Optional(a) => write!(f, "{:?}", a),
+            Item::LoopZero(a) => write!(f, "{:?}", a),
+            Item::LoopOnce(a) => write!(f, "{:?}", a),
+            Item::Exact(a) => write!(f, "{:?}", a),
         }
     }
 }

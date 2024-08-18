@@ -2,9 +2,9 @@ use crate::structure::{Alter, Generate};
 use std::fmt::{Debug, Formatter};
 
 pub struct Rule {
-    name: String,
-    rstype: String,
-    alters: Vec<Alter>,
+    pub name: String,
+    pub rstype: String,
+    pub alters: Vec<Alter>,
 }
 
 impl Generate for Rule {
@@ -15,6 +15,6 @@ impl Generate for Rule {
 
 impl Debug for Rule {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        todo!()
+        write!(f, "{}[{}]: {:#?}", self.name, self.rstype, self.alters)
     }
 }
