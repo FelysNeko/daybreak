@@ -1,8 +1,13 @@
+# this minimum meta.gram is meant to be implemented manually
+# then use this to generate the real peg parser will be easier
+
 grammar[Grammar]:
     | rules+ EOF { Grammar { rules } }
 
 rule[Rule]:
-    | NAME RSTYPE SEMICOL NEWLINE (SPACE SPACE SPACE SPACE PIPE SPACE alter NEWLINE)+ NEWLINE { Rule { name, rstype, alters } }
+    | NAME RSTYPE SEMICOL NEWLINE (SPACE SPACE SPACE SPACE PIPE SPACE alter NEWLINE)+ NEWLINE {
+        Rule { name, rstype, alters }
+    }
 
 alter[Alter]:
     | (item SPACE)+ INLINE { Alter { items, inline } }
