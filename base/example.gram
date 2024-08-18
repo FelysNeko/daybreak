@@ -6,8 +6,8 @@ rules[Vec<Rule>]:
     | rule  { vec![rule] }
 
 rule[Rule]:
-    | NAME "[" NATIVE "]" ":" alter { Rule { name, native, alters } }
-    | NAME "[" NATIVE "]" ":" "|" alters { Rule { name, native, alters } }
+    | NAME "[" RSTYPE "]" ":" alter { Rule { name, rstype, alters } }
+    | NAME "[" RSTYPE "]" ":" "|" alters { Rule { name, rstype, alters } }
 
 alters[Vec<Alter>]:
     | alter "|" alters { chain!(alters, alter) }

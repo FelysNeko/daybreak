@@ -1,5 +1,5 @@
 mod parser;
-mod parent;
+mod structure;
 
 fn main() {
     
