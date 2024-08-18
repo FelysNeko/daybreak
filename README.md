@@ -1,6 +1,6 @@
 # RsPEGen
 
-The project is still in the planning stage, but the target is to create a parser generator based on PEG rules. The project is very likely to be written in Rust and will primarily support Python, Rust, and C as target languages.
+The target is to create a PEG parser generator. This is another Rust project and will primarily support Rust as target language, followed by Python and C. I will try to make it as general as possible.
 
 Prerequisite of future [Felys](https://github.com/felys-lang/felys) syntax, inspired by [PEP617](https://peps.python.org/pep-0617/).
 
