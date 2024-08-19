@@ -1,8 +1,8 @@
-use crate::structure::{Generate, Item};
+use crate::structure::{Generate, Named};
 use std::fmt::{Debug, Formatter};
 
 pub struct Alter {
-    pub items: Vec<Item>,
+    pub items: Vec<Named>,
     pub inline: String,
 }
 

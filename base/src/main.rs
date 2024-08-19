@@ -1,5 +1,5 @@
 use crate::parser::Parser;
-use crate::structure::{Alter, Atom, Grammar, Item, Rule};
+use crate::structure::{Alter, Atom, Grammar, Item, Named, Rule};
 use std::fs::read_to_string;
 
 mod parser;
@@ -7,7 +7,7 @@ mod structure;
 
 
 fn main() {
-    let source = read_to_string("example.gram").unwrap();
+    let source = read_to_string("pegen.gram").unwrap();
     let mut peg = Parser::new(source.as_str());
     println!("{:?}", peg.grammar());
 }
@@ -79,16 +79,16 @@ impl Parser<'_> {
     fn alter(&mut self) -> Option<Alter> {
         let mut sandbox = self.clone();
         if let Some(alter) = || -> Option<Alter> {
-            let mut items = vec![sandbox.item()?];
+            let mut items = vec![sandbox.named()?];
 
             let mut loopbox = sandbox.clone();
             while let (
-                Some(()), Some(item)
+                Some(()), Some(alter)
             ) = (
-                loopbox.expect(" "), loopbox.item()
+                loopbox.expect(" "), loopbox.named()
             ) {
                 sandbox.update(loopbox.clone());
-                items.push(item);
+                items.push(alter);
             }
             
             sandbox.expect(" ")?;
@@ -100,34 +100,55 @@ impl Parser<'_> {
         }
         None
     }
-
-    fn item(&mut self) -> Option<Item> {
+    
+    fn named(&mut self) -> Option<Named> {
         let mut sandbox = self.clone();
         let mut cut = false;
-        if let Some(item) = || -> Option<Item> {
+        if let Some(named) = || -> Option<Named> {
             let name = sandbox.name()?;
             sandbox.expect("=")?;
             cut = true;
-            let atom = sandbox.atom()?;
-            Some(Item::Exact(Some(name), atom))
+            let item = sandbox.item()?;
+            Some(Named::Identifier(name, item))
         }() {
             self.update(sandbox);
-            return Some(item);
+            return Some(named);
         } else if cut {
             return None
         }
         sandbox = self.clone();
+        if let Some(named) = || -> Option<Named> {
+            let item = sandbox.item()?;
+            Some(Named::Anonymous(item))
+        }() {
+            self.update(sandbox);
+            return Some(named);
+        }
+        sandbox = self.clone();
+        if let Some(named) = || -> Option<Named> {
+            sandbox.expect("~")?;
+            Some(Named::Cut)
+        }() {
+            self.update(sandbox);
+            return Some(named);
+        }
+        None
+    }
+
+    fn item(&mut self) -> Option<Item> {
+        let mut sandbox = self.clone();
         if let Some(item) = || -> Option<Item> {
             let atom = sandbox.atom()?;
-            Some(Item::Exact(None, atom))
+            sandbox.expect("?")?;
+            Some(Item::Optional(atom))
         }() {
             self.update(sandbox);
             return Some(item);
         }
         sandbox = self.clone();
         if let Some(item) = || -> Option<Item> {
-            sandbox.expect("~")?;
-            Some(Item::Cut)
+            let atom = sandbox.atom()?;
+            Some(Item::Optional(atom))
         }() {
             self.update(sandbox);
             return Some(item);
