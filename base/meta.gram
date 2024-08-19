@@ -2,18 +2,23 @@
 # then use this to generate the real peg parser will be easier
 
 grammar[Grammar]:
-    | rules+ EOF { Grammar { rules } }
+    | rule (NEWLINE rule)* EOF { Grammar { rules } }
 
 rule[Rule]:
-    | NAME RSTYPE SEMICOL NEWLINE (SPACE SPACE SPACE SPACE PIPE SPACE alter NEWLINE)+ NEWLINE {
+    | NAME RSTYPE ": " alter NEWLINE {
+        Rule { name, rstype, alters: vec![alter] }
+    }
+    | NAME RSTYPE ":" NEWLINE ("    | " alter NEWLINE)+ {
         Rule { name, rstype, alters }
     }
-
+    
 alter[Alter]:
-    | (item SPACE)+ INLINE { Alter { items, inline } }
+    | item (" " item)* " " INLINE { Alter { items, inline } }
 
 item[Item]:
-    | atom { Item::Exact(atom) }
+    | NAME "=" ~ atom { Item::Exact(name, atom) }
+    | atom { Item::Exact(None, atom) }
+    | "~" { Item::Cut }
 
 atom[Atom]:
     | STRING { Atom::String(string) }

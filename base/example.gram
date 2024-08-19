@@ -29,4 +29,3 @@ item[Item]:
 atom[Atom]:
     | NAME { Atom::Name(name) }
     | STRING { Atom::String(string) }
-

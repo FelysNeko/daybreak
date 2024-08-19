@@ -39,7 +39,7 @@ impl Parser<'_> {
     pub fn string(&mut self) -> Option<String> {
         let mut sandbox = self.clone();
         let mut buffer = String::new();
-        sandbox.expect('"')?;
+        sandbox.expect("\"")?;
         while let Some(ch) = sandbox.cursor.peek() {
             if !matches!(ch, '"') {
                 buffer.push(ch.to_owned());
@@ -48,7 +48,7 @@ impl Parser<'_> {
                 break;
             }
         }
-        sandbox.expect('"')?;
+        sandbox.expect("\"")?;
         if buffer.is_empty() {
             None
         } else {
@@ -61,7 +61,7 @@ impl Parser<'_> {
         let mut sandbox = self.clone();
         let mut buffer = String::new();
         let mut counter = 0;
-        sandbox.expect('{')?;
+        sandbox.expect("{")?;
         while let Some(ch) = sandbox.cursor.peek() {
             match ch {
                 '{' => counter += 1,
@@ -75,7 +75,7 @@ impl Parser<'_> {
                 sandbox.cursor.next();
             }
         }
-        sandbox.expect('}')?;
+        sandbox.expect("}")?;
         if buffer.is_empty() {
             None
         } else {
@@ -87,7 +87,7 @@ impl Parser<'_> {
     pub fn rstype(&mut self) -> Option<String> {
         let mut sandbox = self.clone();
         let mut buffer = String::new();
-        sandbox.expect('[')?;
+        sandbox.expect("[")?;
         while let Some(ch) = sandbox.cursor.peek() {
             if !matches!(ch, ']') {
                 buffer.push(ch.to_owned());
@@ -96,7 +96,7 @@ impl Parser<'_> {
                 break;
             }
         }
-        sandbox.expect(']')?;
+        sandbox.expect("]")?;
         if buffer.is_empty() {
             None
         } else {
@@ -105,19 +105,21 @@ impl Parser<'_> {
         }
     }
 
-    pub fn expect(&mut self, ch: char) -> Option<()> {
+    pub fn expect(&mut self, s: &str) -> Option<()> {
         let mut sandbox = self.clone();
-        if Some(ch) == sandbox.cursor.next() {
-            self.update(sandbox);
-            Some(())
-        } else {
-            None
+        for ch in s.chars() {
+            if Some(&ch) == sandbox.cursor.peek() {
+                sandbox.cursor.next();
+            } else {
+                return None;
+            }
         }
+        self.update(sandbox);
+        Some(())
     }
 
     pub fn eof(&mut self) -> Option<()> {
-        let mut sandbox = self.clone();
-        if sandbox.cursor.next().is_none() {
+        if self.cursor.peek().is_none() {
             Some(())
         } else {
             None
