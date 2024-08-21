@@ -1,15 +1,17 @@
 use crate::parser::Parser;
 use crate::structure::{Alter, Atom, Grammar, Item, Named, Rule};
 use std::fs::read_to_string;
+use std::time::Instant;
 
 mod parser;
 mod structure;
 
 
 fn main() {
+    let start = Instant::now();
     let source = read_to_string("pegen.gram").unwrap();
     let mut peg = Parser::new(source.as_str());
-    println!("{:?}", peg.grammar());
+    println!("{:?}\n\nFinished in {:?}", peg.grammar(), start.elapsed());
 }
 
 impl Parser<'_> {
