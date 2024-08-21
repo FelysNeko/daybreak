@@ -1,7 +1,7 @@
-use std::fs::read_to_string;
 use crate::cache::{CacheResult, CacheType};
 use crate::parser::Parser;
 use crate::structure::{Alter, Atom, Grammar, Item, Named, Rule};
+use std::fs::read_to_string;
 use std::time::Instant;
 
 mod parser;
@@ -13,7 +13,12 @@ fn main() {
     let start = Instant::now();
     let source = read_to_string("pegen.gram").unwrap();
     let mut peg = Parser::new(source);
-    println!("\n{:?}\n\nFinished in {:?}", peg.grammar(), start.elapsed());
+    let result = peg.grammar();
+
+    println!(
+        "\n{:?}\n\nFinished in {:?} with {} hit from {} cache",
+        result, start.elapsed(), peg.cache.hit, peg.cache.body.len()
+    );
 }
 
 

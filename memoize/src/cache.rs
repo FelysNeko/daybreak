@@ -1,6 +1,6 @@
+use crate::structure::{Alter, Atom, Grammar, Item, Named, Rule};
 use std::collections::HashMap;
 use std::fmt::{Debug, Formatter};
-use crate::structure::{Alter, Atom, Grammar, Item, Named, Rule};
 
 #[derive(Eq, PartialEq, Hash, Clone, Copy, Debug)]
 pub enum CacheType {
@@ -32,12 +32,14 @@ pub enum CacheResult {
 
 pub struct Cache {
     pub body: HashMap<(usize, CacheType), (CacheResult, usize)>,
+    pub hit: usize,
 }
 
 impl Cache {
-    pub fn get(&self, pos: usize, ct: CacheType) -> Option<(CacheResult, usize)> {
+    pub fn get(&mut self, pos: usize, ct: CacheType) -> Option<(CacheResult, usize)> {
         if let Some((res, end)) = self.body.get(&(pos, ct)) {
             println!("hit:\t[{}] {:?} => {:?} [{}]", pos, ct, res, end);
+            self.hit += 1;
             Some((res.clone(), end.to_owned()))
         } else {
             None
@@ -45,7 +47,6 @@ impl Cache {
     }
 
     pub fn insert(&mut self, pos: usize, ct: CacheType, res: CacheResult, end: usize) {
-        println!("cache:\t[{}] {:?} => {:?} [{}]", pos, ct, res, end);
         if self.body.insert((pos, ct), (res, end)).is_some() {
             panic!("cache replaced")
         }

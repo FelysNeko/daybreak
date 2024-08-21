@@ -15,7 +15,8 @@ impl Parser {
                 cursor: 0,
             },
             cache: Cache {
-                body: HashMap::new()
+                body: HashMap::new(),
+                hit: 0,
             },
         }
     }
