@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 use std::fmt::{Debug, Formatter};
-use crate::parser::Parser;
 use crate::structure::{Alter, Atom, Grammar, Item, Named, Rule};
 
 #[derive(Eq, PartialEq, Hash, Clone, Copy, Debug)]
@@ -9,7 +8,6 @@ pub enum CacheType {
     Grammar,
     String,
     Inline,
-    Rstype,
     Named,
     Alter,
     Name,
@@ -24,7 +22,6 @@ pub enum CacheResult {
     Grammar(Option<Grammar>),
     String(Option<String>),
     Inline(Option<String>),
-    Rstype(Option<String>),
     Named(Option<Named>),
     Alter(Option<Alter>),
     Name(Option<String>),
@@ -63,7 +60,6 @@ impl Debug for CacheResult {
             CacheResult::Grammar(r) => write!(f, "{:?}", r),
             CacheResult::String(r) => write!(f, "{:?}", r),
             CacheResult::Inline(r) => write!(f, "{:?}", r),
-            CacheResult::Rstype(r) => write!(f, "{:?}", r),
             CacheResult::Named(r) => write!(f, "{:?}", r),
             CacheResult::Alter(r) => write!(f, "{:?}", r),
             CacheResult::Name(r) => write!(f, "{:?}", r),

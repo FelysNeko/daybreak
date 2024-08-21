@@ -1,6 +1,6 @@
+use crate::cache::CacheResult;
 use crate::structure::{Generate, Named};
 use std::fmt::{Debug, Formatter};
-use crate::cache::CacheResult;
 
 #[derive(Clone)]
 pub struct Alter {
