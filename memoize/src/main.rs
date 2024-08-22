@@ -12,7 +12,7 @@ mod structure;
 fn main() {
     let start = Instant::now();
     let source = read_to_string("pegen.gram").unwrap();
-    let mut peg = Parser::new(source);
+    let mut peg = Parser::new(source, true);
     let result = peg.grammar();
 
     println!(
@@ -25,14 +25,7 @@ fn main() {
 impl Parser {
     fn grammar(&mut self) -> Option<Grammar> {
         let origin = self.stream.cursor;
-        let ct = CacheType::Grammar;
-
-        if let Some((result, end)) = self.cache.get(origin, ct) {
-            self.stream.cursor = end;
-            return result.into();
-        }
-
-        let result = || -> Option<Grammar> {
+        memoize!(self, CacheType::Grammar, CacheResult::Grammar, Grammar, {
             if let Some(grammar) = || -> Option<Grammar> {
                 let mut rules = vec![self.rule()?];
 
@@ -54,23 +47,12 @@ impl Parser {
                 self.stream.cursor = origin
             }
             None
-        }();
-
-        let cr = CacheResult::Grammar(result.clone());
-        self.cache.insert(origin, ct, cr, self.stream.cursor);
-        result
+        })
     }
 
     fn rule(&mut self) -> Option<Rule> {
         let origin = self.stream.cursor;
-        let ct = CacheType::Rule;
-
-        if let Some((result, end)) = self.cache.get(origin, ct) {
-            self.stream.cursor = end;
-            return result.into();
-        }
-
-        let result = || -> Option<Rule> {
+        memoize!(self, CacheType::Rule, CacheResult::Rule, Rule, {
             if let Some(rule) = || -> Option<Rule> {
                 let name = self.name()?;
                 self.expect("[")?;
@@ -110,23 +92,12 @@ impl Parser {
                 self.stream.cursor = origin
             }
             None
-        }();
-
-        let cr = CacheResult::Rule(result.clone());
-        self.cache.insert(origin, ct, cr, self.stream.cursor);
-        result
+        })
     }
 
     fn alter(&mut self) -> Option<Alter> {
         let origin = self.stream.cursor;
-        let ct = CacheType::Alter;
-
-        if let Some((result, end)) = self.cache.get(origin, ct) {
-            self.stream.cursor = end;
-            return result.into();
-        }
-
-        let result = || -> Option<Alter> {
+        memoize!(self, CacheType::Alter, CacheResult::Alter, Alter, {
             if let Some(alter) = || -> Option<Alter> {
                 let mut nameds = vec![self.named()?];
 
@@ -150,23 +121,12 @@ impl Parser {
                 self.stream.cursor = origin
             }
             None
-        }();
-
-        let cr = CacheResult::Alter(result.clone());
-        self.cache.insert(origin, ct, cr, self.stream.cursor);
-        result
+        })
     }
 
     fn named(&mut self) -> Option<Named> {
         let origin = self.stream.cursor;
-        let ct = CacheType::Named;
-
-        if let Some((result, end)) = self.cache.get(origin, ct) {
-            self.stream.cursor = end;
-            return result.into();
-        }
-
-        let result = || -> Option<Named> {
+        memoize!(self, CacheType::Named, CacheResult::Named, Named, {
             let mut cut = false;
             if let Some(named) = || -> Option<Named> {
                 let name = self.name()?;
@@ -199,23 +159,12 @@ impl Parser {
                 self.stream.cursor = origin;
             }
             None
-        }();
-
-        let cr = CacheResult::Named(result.clone());
-        self.cache.insert(origin, ct, cr, self.stream.cursor);
-        result
+        })
     }
 
     fn item(&mut self) -> Option<Item> {
         let origin = self.stream.cursor;
-        let ct = CacheType::Item;
-
-        if let Some((result, end)) = self.cache.get(origin, ct) {
-            self.stream.cursor = end;
-            return result.into();
-        }
-
-        let result = || -> Option<Item> {
+        memoize!(self, CacheType::Item, CacheResult::Item, Item, {
             if let Some(item) = || -> Option<Item> {
                 let atom = self.atom()?;
                 self.expect("?")?;
@@ -234,23 +183,12 @@ impl Parser {
                 self.stream.cursor = origin
             }
             None
-        }();
-
-        let cr = CacheResult::Item(result.clone());
-        self.cache.insert(origin, ct, cr, self.stream.cursor);
-        result
+        })
     }
 
     fn atom(&mut self) -> Option<Atom> {
         let origin = self.stream.cursor;
-        let ct = CacheType::Atom;
-
-        if let Some((result, end)) = self.cache.get(origin, ct) {
-            self.stream.cursor = end;
-            return result.into();
-        }
-
-        let result = || -> Option<Atom> {
+        memoize!(self, CacheType::Atom, CacheResult::Atom, Atom, {
             if let Some(atom) = || -> Option<Atom> {
                 let string = self.string()?;
                 Some(Atom::String(string))
@@ -268,10 +206,6 @@ impl Parser {
                 self.stream.cursor = origin
             }
             None
-        }();
-
-        let cr = CacheResult::Atom(result.clone());
-        self.cache.insert(origin, ct, cr, self.stream.cursor);
-        result
+        })
     }
 }

@@ -1,6 +1,7 @@
 use crate::cache::{Cache, CacheResult, CacheType};
 use crate::stream::Stream;
 use std::collections::HashMap;
+use crate::memoize;
 
 pub struct Parser {
     pub stream: Stream,
@@ -8,7 +9,7 @@ pub struct Parser {
 }
 
 impl Parser {
-    pub fn new(input: String) -> Self {
+    pub fn new(input: String, v: bool) -> Self {
         Self {
             stream: Stream {
                 body: input,
@@ -16,21 +17,22 @@ impl Parser {
             },
             cache: Cache {
                 body: HashMap::new(),
+                verbose: v,
                 hit: 0,
             },
         }
     }
+    
+    pub fn v(mut self) -> Self {
+        self.cache.verbose = true;
+        self
+    }
+}
 
+#[allow(clippy::redundant_closure_call)]
+impl Parser {
     pub fn expect(&mut self, s: &'static str) -> Option<()> {
-        let origin = self.stream.cursor;
-        let ct = CacheType::Expect(s);
-
-        if let Some((result, end)) = self.cache.get(origin, ct) {
-            self.stream.cursor = end;
-            return result.into();
-        }
-
-        let result = || -> Option<()> {
+        memoize!(self, CacheType::Expect(s), CacheResult::Expect, (), {
             let length = s.len();
             let mut lhs = self.stream.skip();
             let mut rhs = s.chars();
@@ -41,23 +43,11 @@ impl Parser {
             }
             self.stream.cursor += length;
             Some(())
-        }();
-
-        let cr = CacheResult::Expect(result);
-        self.cache.insert(origin, ct, cr, self.stream.cursor);
-        result
+        })
     }
-
+    
     pub fn name(&mut self) -> Option<String> {
-        let origin = self.stream.cursor;
-        let ct = CacheType::Name;
-
-        if let Some((result, end)) = self.cache.get(origin, ct) {
-            self.stream.cursor = end;
-            return result.into();
-        }
-
-        let result = {
+        memoize!(self, CacheType::Name, CacheResult::Name, String, {
             let mut buffer = String::new();
             while let Some(ch) = self.stream.peek() {
                 if matches!(ch, 'a'..='z' | 'A'..='Z' | '_') {
@@ -72,23 +62,12 @@ impl Parser {
             } else {
                 Some(buffer)
             }
-        };
-
-        let cr = CacheResult::Name(result.clone());
-        self.cache.insert(origin, ct, cr, self.stream.cursor);
-        result
+        })
     }
 
     pub fn string(&mut self) -> Option<String> {
         let origin = self.stream.cursor;
-        let ct = CacheType::String;
-
-        if let Some((result, end)) = self.cache.get(origin, ct) {
-            self.stream.cursor = end;
-            return result.into();
-        }
-
-        let result = || -> Option<String> {
+        memoize!(self, CacheType::String, CacheResult::String, String, {
             if self.stream.peek() == Some('"') {
                 self.stream.cursor += 1;
             } else {
@@ -105,23 +84,12 @@ impl Parser {
             }
             self.stream.cursor = origin;
             None
-        }();
-
-        let cr = CacheResult::String(result.clone());
-        self.cache.insert(origin, ct, cr, self.stream.cursor);
-        result
+        })
     }
 
     pub fn inline(&mut self) -> Option<String> {
         let origin = self.stream.cursor;
-        let ct = CacheType::Inline;
-
-        if let Some((result, end)) = self.cache.get(origin, ct) {
-            self.stream.cursor = end;
-            return result.into();
-        }
-
-        let result = || -> Option<String> {
+        memoize!(self, CacheType::Inline, CacheResult::Inline, String, {
             if self.stream.peek() == Some('{') {
                 self.stream.cursor += 1;
             } else {
@@ -144,11 +112,7 @@ impl Parser {
             }
             self.stream.cursor = origin;
             None
-        }();
-
-        let cr = CacheResult::Inline(result.clone());
-        self.cache.insert(origin, ct, cr, self.stream.cursor);
-        result
+        })
     }
 }
 
