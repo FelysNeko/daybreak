@@ -1,3 +1,38 @@
+# The Base Case
+
+This file is describe to the parser in the ./src folder. The intuition is to use this mini peg parser to generate a
+fully functional peg parser. Note that this parser does not parse itself.
+
+```
+grammar[Grammar]:
+    | rule (NEWLINE rule)* EOF { Grammar { rules } }
+
+rule[Rule]:
+    | NAME RSTYPE ": " alter NEWLINE {
+        Rule { name, rstype, alters: vec![alter] }
+    }
+    | NAME RSTYPE ":" NEWLINE ("    | " alter NEWLINE)+ {
+        Rule { name, rstype, alters }
+    }
+
+alter[Alter]:
+    | named (" " named)* " " INLINE { Alter { items, inline } }
+
+named[Named]:
+    | NAME "=" ~ atom { Named::Identifier(name, atom) }
+    | atom { Named::Anonymous(atom) }
+    | "~" { Named::Cut }
+
+atom[Atom]:
+    | STRING { Atom::String(string) }
+    | NAME { Atom::Name(name) }
+```
+
+The cpython [metagrammar.gram](https://github.com/python/cpython/blob/main/Tools/peg_generator/pegen/metagrammar.gram)
+is used as an example. By removing the metadata, `!` and `?` syntax, and extra whitespaces from it, you will get the
+following which is parsable by this mini parser.
+
+```
 start[Grammar]: grammar ENDMARKER { grammar }
 
 grammar[Grammar]:
@@ -18,9 +53,9 @@ rules[RuleList]:
     | rule { [rule] }
 
 rule[Rule]:
-    | rulename memoflag? ":" alts NEWLINE INDENT more_alts DEDENT { Rule(rulename[0], rulename[1], Rhs(alts.alts + more_alts.alts), memo=opt) }
-    | rulename memoflag? ":" NEWLINE INDENT more_alts DEDENT { Rule(rulename[0], rulename[1], more_alts, memo=opt) }
-    | rulename memoflag? ":" alts NEWLINE { Rule(rulename[0], rulename[1], alts, memo=opt) }
+    | rulename ":" alts NEWLINE INDENT more_alts DEDENT { Rule(rulename[0], rulename[1], Rhs(alts.alts + more_alts.alts), memo=opt) }
+    | rulename ":" NEWLINE INDENT more_alts DEDENT { Rule(rulename[0], rulename[1], more_alts, memo=opt) }
+    | rulename ":" alts NEWLINE { Rule(rulename[0], rulename[1], alts, memo=opt) }
 
 rulename[RuleName]:
     | NAME annotation { (name.string, annotation) }
@@ -92,3 +127,5 @@ target_atom[str]:
     | STRING { string.string }
     | "?" { "?" }
     | ":" { ":" }
+
+```
