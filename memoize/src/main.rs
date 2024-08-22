@@ -1,6 +1,7 @@
 use crate::cache::{CacheResult, CacheType};
 use crate::parser::Parser;
 use crate::structure::{Alter, Atom, Generate, Grammar, Item, Named, Rule};
+use colored::Colorize;
 use std::fs::read_to_string;
 use std::time::Instant;
 
@@ -13,9 +14,13 @@ fn main() {
     let start = Instant::now();
     let source = read_to_string("pegen.gram").unwrap();
     let mut peg = Parser::new(source, true);
+    if peg.cache.verbose {
+        println!("Start\tEnd\tResult")
+    }
     if let Some(grammar) = peg.grammar() {
         println!(
-            "\n\n{}\n\nFinished in {:?} with {} hit from {} cache", 
+            "\n\n{}\n\n{}\n\nFinished in {:?} with {} hit from {} cache",
+            "Generation Result".bold().truecolor(0xff, 0xc6, 0xf4),
             grammar.generate(), start.elapsed(),
             peg.cache.hit, peg.cache.body.len()
         )
