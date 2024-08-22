@@ -12,9 +12,9 @@ pub enum Named {
 impl Generate for Named {
     fn generate(&self) -> String {
         match self {
-            Named::Identifier(_, _) => todo!(),
-            Named::Anonymous(_) => todo!(),
-            Named::Cut => todo!()
+            Named::Identifier(n, i) => format!("let {} = {};", n, i.generate()),
+            Named::Anonymous(i) => format!("{};", i.generate()),
+            Named::Cut => "cut = true;".to_string()
         }
     }
 }

@@ -11,8 +11,8 @@ pub enum Item {
 impl Generate for Item {
     fn generate(&self) -> String {
         match self {
-            Item::Optional(_) => todo!(),
-            Item::Exact(_) => todo!(),
+            Item::Optional(a) => a.generate(),
+            Item::Exact(a) => format!("{}?", a.generate()),
         }
     }
 }

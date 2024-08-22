@@ -1,5 +1,5 @@
 use crate::cache::CacheResult;
-use crate::structure::{Generate, Named};
+use crate::structure::{indent, Generate, Named};
 use std::fmt::{Debug, Formatter};
 
 #[derive(Clone)]
@@ -10,7 +10,16 @@ pub struct Alter {
 
 impl Generate for Alter {
     fn generate(&self) -> String {
-        todo!()
+        let body = self.nameds.iter()
+            .map(|x| { format!("{}{}", indent(3), x.generate()) })
+            .collect::<Vec<String>>()
+            .join("\n");
+        format!(
+            "{}\n\
+            {}Some({})", 
+            body,
+            indent(3), self.inline
+        )
     }
 }
 

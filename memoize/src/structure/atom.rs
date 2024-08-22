@@ -11,8 +11,13 @@ pub enum Atom {
 impl Generate for Atom {
     fn generate(&self) -> String {
         match self {
-            Atom::String(_) => todo!(),
-            Atom::Name(_) => todo!()
+            Atom::String(s) => format!("self.expect(\"{}\")", s),
+            Atom::Name(s) => match s.as_str() {
+                "STRING" |
+                "NUMBER" |
+                "INLINE" => format!("self.{}()", s.to_lowercase()),
+                _ => format!("self.{}()", s)
+            },
         }
     }
 }

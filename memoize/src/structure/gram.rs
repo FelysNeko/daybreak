@@ -9,7 +9,11 @@ pub struct Grammar {
 
 impl Generate for Grammar {
     fn generate(&self) -> String {
-        todo!()
+        self.rules.iter()
+            .map(|x| { x.generate() })
+            .collect::<Vec<String>>()
+            .join("\n\n")
+            .to_string()
     }
 }
 

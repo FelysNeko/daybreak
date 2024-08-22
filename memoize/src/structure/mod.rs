@@ -16,3 +16,7 @@ pub use rule::Rule;
 pub trait Generate {
     fn generate(&self) -> String;
 }
+
+pub fn indent(n: usize) -> String {
+    "    ".repeat(n)
+}
