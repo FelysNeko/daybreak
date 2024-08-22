@@ -22,17 +22,20 @@ impl Parser {
             },
         }
     }
-    
-    pub fn v(mut self) -> Self {
-        self.cache.verbose = true;
-        self
-    }
 }
 
 #[allow(clippy::redundant_closure_call)]
 impl Parser {
     pub fn expect(&mut self, s: &'static str) -> Option<()> {
         memoize!(self, CacheType::Expect(s), CacheResult::Expect, (), {
+            if s == "EOF" {
+                return if self.stream.peek().is_none() {
+                    Some(())
+                } else {
+                    None
+                }
+            }
+            
             let length = s.len();
             let mut lhs = self.stream.skip();
             let mut rhs = s.chars();
@@ -45,7 +48,7 @@ impl Parser {
             Some(())
         })
     }
-    
+
     pub fn name(&mut self) -> Option<String> {
         memoize!(self, CacheType::Name, CacheResult::Name, String, {
             let mut buffer = String::new();
@@ -143,12 +146,12 @@ mod tests {
 
     #[test]
     fn expect_str() {
-        let mut parser = Parser::new("12345".to_string());
+        let mut parser = Parser::new("12345".to_string(), false);
         let result = parser.expect("1234");
         assert_eq!(result, Some(()));
         assert_eq!(parser.stream.cursor, 4);
 
-        let mut parser = Parser::new("1234".to_string());
+        let mut parser = Parser::new("1234".to_string(), false);
         let result = parser.expect("12345");
         assert_eq!(result, None);
         assert_eq!(parser.stream.cursor, 0);
@@ -156,12 +159,12 @@ mod tests {
 
     #[test]
     fn name_lexing() {
-        let mut parser = Parser::new("grammar[Grammar]".to_string());
+        let mut parser = Parser::new("grammar[Grammar]".to_string(), false);
         let result = parser.name();
         assert_eq!(result, Some("grammar".to_string()));
         assert_eq!(parser.stream.cursor, 7);
 
-        let mut parser = Parser::new("[Grammar]".to_string());
+        let mut parser = Parser::new("[Grammar]".to_string(), false);
         let result = parser.name();
         assert_eq!(result, None);
         assert_eq!(parser.stream.cursor, 0);
@@ -169,12 +172,12 @@ mod tests {
 
     #[test]
     fn string_lexing() {
-        let mut parser = Parser::new("\"if\"".to_string());
+        let mut parser = Parser::new("\"if\"".to_string(), false);
         let result = parser.string();
         assert_eq!(result, Some("if".to_string()));
         assert_eq!(parser.stream.cursor, 4);
 
-        let mut parser = Parser::new("\"grammar".to_string());
+        let mut parser = Parser::new("\"grammar".to_string(), false);
         let result = parser.string();
         assert_eq!(result, None);
         assert_eq!(parser.stream.cursor, 0);

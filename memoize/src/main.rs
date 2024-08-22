@@ -39,7 +39,8 @@ impl Parser {
                     rules.push(rule);
                 }
                 self.stream.cursor = checkpoint;
-
+                
+                self.expect("EOF")?;
                 Some(Grammar { rules })
             }() {
                 return Some(grammar);
