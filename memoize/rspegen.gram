@@ -1,0 +1,22 @@
+grammar[Grammar]:
+    | first=rule more=rules "EOF" { unimplemented!() }
+    | single=rule "EOF" { unimplemented!() }
+
+rules[Rules]:
+    | "NEWLINE" first=rule more=rules { unimplemented!() }
+    | "NEWLINE" last=rule { unimplemented!() }
+
+rule[Rule]:
+    | name=rulename ":" "NEWLINE" multi=alters { unimplemented!() }
+    | name=rulename ": " single=alter "NEWLINE" { unimplemented!() }
+
+rulename[RuleName]:
+    | name=NAME "[" rstype=NAME "]" { unimplemented!() }
+
+alters[Alters]:
+    | "    | " first=alter "NEWLINE" more=alters { unimplemented!() }
+    | "    | " last=alter "NEWLINE" { unimplemented!() }
+
+alter[Alter]:
+    | first=item " " more=items " " INLINE { unimplemented!() }
+    | single=item " " INLINE { unimplemented!() }

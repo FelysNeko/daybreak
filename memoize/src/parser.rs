@@ -1,7 +1,7 @@
 use crate::cache::{Cache, CacheResult, CacheType};
+use crate::memoize;
 use crate::stream::Stream;
 use std::collections::HashMap;
-use crate::memoize;
 
 pub struct Parser {
     pub stream: Stream,

@@ -13,8 +13,8 @@ impl Generate for Atom {
         match self {
             Atom::String(s) => format!("self.expect(\"{}\")", s),
             Atom::Name(s) => match s.as_str() {
+                "NAME" |
                 "STRING" |
-                "NUMBER" |
                 "INLINE" => format!("self.{}()", s.to_lowercase()),
                 _ => format!("self.{}()", s)
             },

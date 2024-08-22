@@ -12,7 +12,7 @@ mod structure;
 
 fn main() {
     let start = Instant::now();
-    let source = read_to_string("pegen.gram").unwrap();
+    let source = read_to_string("rspegen.gram").unwrap();
     let mut peg = Parser::new(source, true);
     if peg.cache.verbose {
         println!("Start\tEnd\tResult")
