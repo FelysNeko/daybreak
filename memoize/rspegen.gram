@@ -1,10 +1,9 @@
 grammar[Grammar]:
-    | first=rule more=rules "EOF" { unimplemented!() }
-    | single=rule "EOF" { unimplemented!() }
+    | rules=rules "EOF" { unimplemented!() }
 
 rules[Rules]:
-    | "NEWLINE" first=rule more=rules { unimplemented!() }
-    | "NEWLINE" last=rule { unimplemented!() }
+    | first=rule "NEWLINE" more=rules { unimplemented!() }
+    | last=rule { unimplemented!() }
 
 rule[Rule]:
     | name=rulename ":" "NEWLINE" multi=alters { unimplemented!() }
@@ -42,7 +41,7 @@ item[Item]:
     | sep=atom "." node=atom "+" { unimplemented!() }
     | atom=atom { unimplemented!() }
 
-atom[Plain]:
+atom[Atom]:
     | "(" ~ alters=alters ")" { unimplemented!() }
     | name=NAME { unimplemented!() }
     | string=STRING { unimplemented!() }
