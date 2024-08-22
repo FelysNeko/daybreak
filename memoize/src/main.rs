@@ -1,6 +1,6 @@
 use crate::cache::{CacheResult, CacheType};
 use crate::parser::Parser;
-use crate::structure::{Alter, Atom, Generate, Grammar, Item, Named, Rule};
+use crate::structure::{Alter, Atom, Generate, Grammar, Named, Rule};
 use colored::Colorize;
 use std::fs::read_to_string;
 use std::time::Instant;
@@ -139,8 +139,8 @@ impl Parser {
                 let name = self.name()?;
                 self.expect("=")?;
                 cut = true;
-                let item = self.item()?;
-                Some(Named::Identifier(name, item))
+                let atom = self.atom()?;
+                Some(Named::Identifier(name, atom))
             }() {
                 return Some(named);
             } else {
@@ -150,8 +150,8 @@ impl Parser {
                 return None;
             }
             if let Some(named) = || -> Option<Named> {
-                let item = self.item()?;
-                Some(Named::Anonymous(item))
+                let atom = self.atom()?;
+                Some(Named::Anonymous(atom))
             }() {
                 return Some(named);
             } else {
@@ -164,30 +164,6 @@ impl Parser {
                 return Some(named);
             } else {
                 self.stream.cursor = origin;
-            }
-            None
-        })
-    }
-
-    fn item(&mut self) -> Option<Item> {
-        let origin = self.stream.cursor;
-        memoize!(self, CacheType::Item, CacheResult::Item, Item, {
-            if let Some(item) = || -> Option<Item> {
-                let atom = self.atom()?;
-                self.expect("?")?;
-                Some(Item::Optional(atom))
-            }() {
-                return Some(item);
-            } else {
-                self.stream.cursor = origin
-            }
-            if let Some(item) = || -> Option<Item> {
-                let atom = self.atom()?;
-                Some(Item::Exact(atom))
-            }() {
-                return Some(item);
-            } else {
-                self.stream.cursor = origin
             }
             None
         })

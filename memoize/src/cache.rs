@@ -1,7 +1,7 @@
-use crate::structure::{Alter, Atom, Grammar, Item, Named, Rule};
+use crate::structure::{Alter, Atom, Grammar, Named, Rule};
+use colored::Colorize;
 use std::collections::HashMap;
 use std::fmt::{Debug, Formatter};
-use colored::Colorize;
 
 #[macro_export]
 macro_rules! memoize {
@@ -35,7 +35,6 @@ pub enum CacheType {
     Name,
     Rule,
     Atom,
-    Item,
 }
 
 #[derive(Clone)]
@@ -49,7 +48,6 @@ pub enum CacheResult {
     Name(Option<String>),
     Rule(Option<Rule>),
     Atom(Option<Atom>),
-    Item(Option<Item>),
 }
 
 pub struct Cache {
@@ -95,7 +93,6 @@ impl Debug for CacheResult {
             CacheResult::Name(r) => write!(f, "{:?}", r),
             CacheResult::Rule(r) => write!(f, "{:?}", r),
             CacheResult::Atom(r) => write!(f, "{:?}", r),
-            CacheResult::Item(r) => write!(f, "{:?}", r),
         }
     }
 }

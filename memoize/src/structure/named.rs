@@ -1,11 +1,11 @@
 use crate::cache::CacheResult;
-use crate::structure::{Generate, Item};
+use crate::structure::{Generate, Atom};
 use std::fmt::{Debug, Formatter};
 
 #[derive(Clone)]
 pub enum Named {
-    Identifier(String, Item),
-    Anonymous(Item),
+    Identifier(String, Atom),
+    Anonymous(Atom),
     Cut,
 }
 
