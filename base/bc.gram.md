@@ -31,8 +31,4 @@ atom[Atom]:
     | NAME { Atom::Name(name) }
 ```
 
-By removing the followings from the metagrammar.gram, you will get [pegen.gram](pegen.gram) which is parsable by this base case parser.
-
-- The metadata
-- Last line that `!` syntax
-- Some extra whitespaces
+By removing the metadata, `!` syntax, and extra whitespaces from the metagrammar.gram, you will get [pegen.gram](pegen.gram) which is parsable by this base case parser.
