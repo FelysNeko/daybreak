@@ -18,5 +18,31 @@ alters[Alters]:
     | "    | " last=alter "NEWLINE" { unimplemented!() }
 
 alter[Alter]:
-    | first=item " " more=items " " INLINE { unimplemented!() }
-    | single=item " " INLINE { unimplemented!() }
+    | nameds=nameds " " INLINE { unimplemented!() }
+
+nameds[Nameds]:
+    | first=named " " more=nameds { unimplemented!() }
+    | single=named { unimplemented!() }
+
+named[Named]:
+    | name=NAME "=" ~ item=item { unimplemented!() }
+    | item=item { unimplemented!() }
+    | it=lookahead { unimplemented!() }
+
+lookahead[Lookahead]:
+    | "&" ~ atom=atom { unimplemented!() }
+    | "!" ~ atom=atom { unimplemented!() }
+    | "~" { unimplemented!() }
+
+item[Item]:
+    | "[" ~ alters=alters "]" { unimplemented!() }
+    | atom=atom "?" { unimplemented!() }
+    | atom=atom "*" { unimplemented!() }
+    | atom=atom "+" { unimplemented!() }
+    | sep=atom "." node=atom "+" { unimplemented!() }
+    | atom=atom { unimplemented!() }
+
+atom[Plain]:
+    | "(" ~ alters=alters ")" { unimplemented!() }
+    | name=NAME { unimplemented!() }
+    | string=STRING { unimplemented!() }
