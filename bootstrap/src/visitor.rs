@@ -36,7 +36,7 @@ impl Visitor {
             output: Vec::new(),
         }.grammar(grammar)
     }
-    
+
     pub fn grammar(&mut self, grammar: Grammar) -> String {
         for each in grammar.rules {
             self.rule(each);
@@ -49,7 +49,7 @@ impl Visitor {
         lp!(self, "pub fn {}(&mut self) -> Option<{}> {{", rule.name, rule.rstype);
         indent!(self, {
             lp!(self, "let origin = self.stream.cursor;");
-            lp!(self, "base!(self, CacheType::{}, CacheResult::{}, {}, {{", rule.rstype, rule.rstype, rule.rstype);
+            lp!(self, "bootstrap!(self, CacheType::{}, CacheResult::{}, {}, {{", rule.rstype, rule.rstype, rule.rstype);
             indent!(self, {
                 lp!(self, "let mut cut = false;");
                 lp!(self, "");
