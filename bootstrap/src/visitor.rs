@@ -35,15 +35,16 @@ impl Visitor {
         indent!(self, {
             for each in grammar.rules {
                 self.rule(each);
-            lp!(self, "");
+                lp!(self, "");
             }
         });
+        self.output.pop();
         lp!(self, "}}");
         self.output.join("\n")
     }
 
     pub fn rule(&mut self, rule: Rule) {
-        lp!(self, "pub fn {}(&mut self) -> Option<{}> {{", rule.name, rule.rstype);
+        lp!(self, "fn {}(&mut self) -> Option<{}> {{", rule.name, rule.rstype);
         indent!(self, {
             lp!(self, "let origin = self.stream.cursor;");
             lp!(self, "bootstrap!(self, CacheType::{}, CacheResult::{}, {}, {{", rule.rstype, rule.rstype, rule.rstype);

@@ -1,6 +1,9 @@
 import interface
 
 path = 'rspegen.gram'
+core, types = interface.generate(path, False)
+
+
 header = f'// Generated from {path} by generate.py\n'
 
 node_template = '''
@@ -31,7 +34,6 @@ fn {nt_lower}(&mut self, {nt_lower}: {nt}) {{
 }}
 '''
 
-_, types = interface.generate(path, False)
 
 # generate node.rs
 fmt_node_list = [node_template.format(nt=each) for each in types]
@@ -46,7 +48,7 @@ use std::fmt::{{Debug, Formatter}};
 fmt_visitor_list = [visitor_template.format(nt_lower=each.lower(), nt=each) for each in types]
 visitor_body = '\n'.join(fmt_visitor_list)
 visitor = header + '''
-use crate::node::{{{}}};
+use crate::node::{{{types}}};
 
 pub struct Visitor {{
     pub indent: usize,
@@ -76,7 +78,30 @@ macro_rules! p {{
         }}
     }};
 }}
-'''.format(', '.join(types)) + visitor_body
+'''.format(types=', '.join(types)) + visitor_body
+
+
+# generate main.rs
+main_body = core
+main = header + '''
+use crate::cache::{{CacheResult, CacheType}};
+use crate::node::{{{types}}};
+use crate::parser::Parser;
+use crate::visitor::Visitor;
+
+mod parser;
+mod stream;
+mod cache;
+mod visitor;
+mod node;
+
+impl Parser {{
+    pub fn generate(&mut self) -> Option<(String, Vec<String>)> {{
+        todo!()
+    }}
+}}
+'''.format(types=', '.join(types)) + main_body
 
 print(node)
 print(visitor)
+print(main)
