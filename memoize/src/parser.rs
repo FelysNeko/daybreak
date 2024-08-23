@@ -108,7 +108,7 @@ impl Parser {
                     _ => ()
                 }
                 if counter == -1 {
-                    return Some(buffer);
+                    return Some(buffer.trim().to_string());
                 } else {
                     buffer.push(ch)
                 }
