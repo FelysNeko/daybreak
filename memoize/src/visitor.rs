@@ -67,7 +67,7 @@ impl Visitor {
             for each in alter.nameds {
                 self.nameds(each)
             }
-            lp!(self, "Some({})", alter.inline)
+            lp!(self, "Some({})", alter.inline.trim())
         });
         lp!(self, "}}() {{");
         indent!(self, {

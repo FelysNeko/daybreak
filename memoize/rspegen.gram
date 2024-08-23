@@ -6,11 +6,11 @@ rule_vector[RuleVector]:
     | r=rule { unimplemented!() }
 
 rule[Rule]:
-    | name=rule_name ":" "NEWLINE" ac=alter_collapse "NEWLINE" { unimplemented!() }
-    | name=rule_name ": " av=alter_vector "NEWLINE" { unimplemented!() }
+    | rn=rule_name ":" "NEWLINE" ac=alter_collapse "NEWLINE" { unimplemented!() }
+    | rn=rule_name ": " av=alter_vector "NEWLINE" { unimplemented!() }
 
 rule_name[RuleName]:
-    | name=NAME "[" rstype=NAME "]" { unimplemented!() }
+    | n=NAME "[" rst=NAME "]" { unimplemented!() }
 
 alter_collapse[AlterCollapse]:
     | "    | " av=alter_vector "NEWLINE" ac=alter_collapse { unimplemented!() }
