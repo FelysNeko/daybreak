@@ -1,11 +1,11 @@
 import interface
 
 path = 'rspegen.gram'
-core, types = interface.generate(path, False)
-
-
 header = f'// Generated from {path} by generate.py\n'
 
+core, types = interface.generate(path, False)
+
+# generate node.rs
 node_template = '''
 #[derive(Clone)]
 pub struct {nt} {{
@@ -27,15 +27,6 @@ impl From<CacheResult> for Option<{nt}> {{
     }}
 }}
 '''
-
-visitor_template = '''
-fn {nt_lower}(&mut self, {nt_lower}: {nt}) {{
-    todo!()
-}}
-'''
-
-
-# generate node.rs
 fmt_node_list = [node_template.format(nt=each) for each in types]
 node_body = '\n'.join(fmt_node_list)
 node = header + '''
@@ -45,6 +36,11 @@ use std::fmt::{{Debug, Formatter}};
 
 
 # generate visitor.rs
+visitor_template = '''
+fn {nt_lower}(&mut self, {nt_lower}: {nt}) {{
+    todo!()
+}}
+'''
 fmt_visitor_list = [visitor_template.format(nt_lower=each.lower(), nt=each) for each in types]
 visitor_body = '\n'.join(fmt_visitor_list)
 visitor = header + '''
