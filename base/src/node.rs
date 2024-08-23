@@ -11,7 +11,7 @@ pub struct Alter {
 
 impl Debug for Alter {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?} {{{}}}", self.nameds, self.inline)
+        write!(f, "{:?} {{ {} }}", self.nameds, self.inline)
     }
 }
 

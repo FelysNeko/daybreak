@@ -49,7 +49,7 @@ impl Visitor {
         lp!(self, "pub fn {}(&mut self) -> Option<{}> {{", rule.name, rule.rstype);
         indent!(self, {
             lp!(self, "let origin = self.stream.cursor;");
-            lp!(self, "memoize!(self, CacheType::{}, CacheResult::{}, {}, {{", rule.rstype, rule.rstype, rule.rstype);
+            lp!(self, "base!(self, CacheType::{}, CacheResult::{}, {}, {{", rule.rstype, rule.rstype, rule.rstype);
             indent!(self, {
                 lp!(self, "let mut cut = false;");
                 lp!(self, "");
