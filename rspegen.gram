@@ -21,7 +21,7 @@ alter_vector[AlterVector]:
     | a=alter { unimplemented!() }
 
 alter[Alter]:
-    | nameds=nameds " " INLINE { unimplemented!() }
+    | nv=named_vector " " INLINE { unimplemented!() }
 
 named_vector[NamedVector]:
     | n=named " " nv=named_vector { unimplemented!() }
