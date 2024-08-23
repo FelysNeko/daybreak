@@ -10,7 +10,7 @@ fn generate(path: PathBuf, v: bool) -> PyResult<(String, Vec<String>)> {
     let input = read_to_string(path)?;
     match Parser::new(input, v).generate() {
         Some(result) => Ok(result),
-        None => Err(PyException::new_err("parsing failed"))
+        None => Err(PyException::new_err("Parsing failed due to invalid syntax"))
     }
 }
 

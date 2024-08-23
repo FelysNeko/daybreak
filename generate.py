@@ -3,7 +3,15 @@ import interface
 path = 'rspegen.gram'
 header = f'// Generated from {path} by generate.py\n'
 
-core, types = interface.generate(path, False)
+try:
+    core, types = interface.generate(path, False)
+except Exception as error:
+    try:
+        interface.generate(path, True)
+    finally:
+        print(f'\033[91m{error}\033[0m')
+        exit(1)
+    
 
 # generate node.rs
 node_template = '''
