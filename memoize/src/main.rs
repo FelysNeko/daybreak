@@ -1,6 +1,7 @@
 use crate::cache::{CacheResult, CacheType};
+use crate::node::{Alter, Atom, Grammar, Named, Rule};
 use crate::parser::Parser;
-use crate::structure::{Alter, Atom, Generate, Grammar, Named, Rule};
+use crate::visitor::{generate, Visitor};
 use colored::Colorize;
 use std::fs::read_to_string;
 use std::time::Instant;
@@ -8,7 +9,8 @@ use std::time::Instant;
 mod parser;
 mod stream;
 mod cache;
-mod structure;
+mod visitor;
+mod node;
 
 fn main() {
     let start = Instant::now();
@@ -21,7 +23,7 @@ fn main() {
         println!(
             "\n\n{}\n\n{}\n\nFinished in {:?} with {} hit from {} cache",
             "Generation Result".bold().truecolor(0xff, 0xc6, 0xf4),
-            grammar.generate(), start.elapsed(),
+            Visitor::generate(grammar), start.elapsed(),
             peg.cache.hit, peg.cache.body.len()
         )
     }

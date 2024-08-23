@@ -1,47 +1,51 @@
 grammar[Grammar]:
-    | rules=rules "EOF" { unimplemented!() }
+    | rv=rule_vector "EOF" { unimplemented!() }
 
-rules[Rules]:
-    | first=rule "NEWLINE" more=rules { unimplemented!() }
-    | last=rule { unimplemented!() }
+rule_vector[RuleVector]:
+    | r=rule "NEWLINE" rv=rule_vector { unimplemented!() }
+    | r=rule { unimplemented!() }
 
 rule[Rule]:
-    | name=rulename ":" "NEWLINE" multi=alters { unimplemented!() }
-    | name=rulename ": " single=alter "NEWLINE" { unimplemented!() }
+    | name=rule_name ":" "NEWLINE" ac=alter_collapse "NEWLINE" { unimplemented!() }
+    | name=rule_name ": " av=alter_vector "NEWLINE" { unimplemented!() }
 
-rulename[RuleName]:
+rule_name[RuleName]:
     | name=NAME "[" rstype=NAME "]" { unimplemented!() }
 
-alters[Alters]:
-    | "    | " first=alter "NEWLINE" more=alters { unimplemented!() }
-    | "    | " last=alter "NEWLINE" { unimplemented!() }
+alter_collapse[AlterCollapse]:
+    | "    | " av=alter_vector "NEWLINE" ac=alter_collapse { unimplemented!() }
+    | "    | " av=alter_vector { unimplemented!() }
+
+alter_vector[AlterVector]:
+    | a=alter " | " ac=alter_vector { unimplemented!() }
+    | a=alter { unimplemented!() }
 
 alter[Alter]:
     | nameds=nameds " " INLINE { unimplemented!() }
 
-nameds[Nameds]:
-    | first=named " " more=nameds { unimplemented!() }
-    | single=named { unimplemented!() }
+named_vector[NamedVector]:
+    | n=named " " nv=named_vector { unimplemented!() }
+    | n=named { unimplemented!() }
 
 named[Named]:
-    | name=NAME "=" ~ item=item { unimplemented!() }
-    | item=item { unimplemented!() }
-    | it=lookahead { unimplemented!() }
+    | n=NAME "=" ~ i=item { unimplemented!() }
+    | i=item { unimplemented!() }
+    | l=lookahead { unimplemented!() }
 
 lookahead[Lookahead]:
-    | "&" ~ atom=atom { unimplemented!() }
-    | "!" ~ atom=atom { unimplemented!() }
+    | "&" ~ a=atom { unimplemented!() }
+    | "!" ~ a=atom { unimplemented!() }
     | "~" { unimplemented!() }
 
 item[Item]:
-    | "[" ~ alters=alters "]" { unimplemented!() }
-    | atom=atom "?" { unimplemented!() }
-    | atom=atom "*" { unimplemented!() }
-    | atom=atom "+" { unimplemented!() }
-    | sep=atom "." node=atom "+" { unimplemented!() }
-    | atom=atom { unimplemented!() }
+    | "[" ~ av=alter_vector "]" { unimplemented!() }
+    | a=atom "?" { unimplemented!() }
+    | a=atom "*" { unimplemented!() }
+    | a=atom "+" { unimplemented!() }
+    | s=atom "." n=atom "+" { unimplemented!() }
+    | a=atom { unimplemented!() }
 
 atom[Atom]:
-    | "(" ~ alters=alters ")" { unimplemented!() }
+    | "(" ~ av=alter_vector ")" { unimplemented!() }
     | name=NAME { unimplemented!() }
     | string=STRING { unimplemented!() }

@@ -1,4 +1,4 @@
-use crate::structure::{Alter, Atom, Grammar, Named, Rule};
+use crate::node::{Alter, Atom, Grammar, Named, Rule};
 use colored::Colorize;
 use std::collections::HashMap;
 use std::fmt::{Debug, Formatter};
