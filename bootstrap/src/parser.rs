@@ -4,8 +4,8 @@ use crate::stream::Stream;
 use std::collections::HashMap;
 
 pub struct Parser {
-    pub stream: Stream,
-    pub cache: Cache,
+    pub(crate) stream: Stream,
+    pub(crate) cache: Cache,
 }
 
 impl Parser {
@@ -26,7 +26,7 @@ impl Parser {
 
 #[allow(clippy::redundant_closure_call)]
 impl Parser {
-    pub fn expect(&mut self, s: &'static str) -> Option<()> {
+    pub(crate) fn expect(&mut self, s: &'static str) -> Option<()> {
         memoize!(self, CacheType::Expect(s), CacheResult::Expect, (), {
             if s == "EOF" {
                 return if self.stream.peek().is_none() {
@@ -49,7 +49,7 @@ impl Parser {
         })
     }
 
-    pub fn name(&mut self) -> Option<String> {
+    pub(crate) fn name(&mut self) -> Option<String> {
         memoize!(self, CacheType::Name, CacheResult::Name, String, {
             let mut buffer = String::new();
             while let Some(ch) = self.stream.peek() {
@@ -68,7 +68,7 @@ impl Parser {
         })
     }
 
-    pub fn string(&mut self) -> Option<String> {
+    pub(crate) fn string(&mut self) -> Option<String> {
         let origin = self.stream.cursor;
         memoize!(self, CacheType::String, CacheResult::String, String, {
             if self.stream.peek() == Some('"') {
@@ -90,7 +90,7 @@ impl Parser {
         })
     }
 
-    pub fn inline(&mut self) -> Option<String> {
+    pub(crate) fn inline(&mut self) -> Option<String> {
         let origin = self.stream.cursor;
         memoize!(self, CacheType::Inline, CacheResult::Inline, String, {
             if self.stream.peek() == Some('{') {

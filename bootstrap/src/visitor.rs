@@ -30,18 +30,15 @@ macro_rules! p {
 }
 
 impl Visitor {
-    pub fn generate(grammar: Grammar) -> String {
-        Self {
-            indent: 0,
-            output: Vec::new(),
-        }.grammar(grammar)
-    }
-
     pub fn grammar(&mut self, grammar: Grammar) -> String {
-        for each in grammar.rules {
-            self.rule(each);
+        lp!(self, "impl Parser {{");
+        indent!(self, {
+            for each in grammar.rules {
+                self.rule(each);
             lp!(self, "");
-        }
+            }
+        });
+        lp!(self, "}}");
         self.output.join("\n")
     }
 

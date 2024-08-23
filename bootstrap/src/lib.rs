@@ -1,10 +1,7 @@
 use crate::cache::{CacheResult, CacheType};
 use crate::node::{Alter, Atom, Grammar, Named, Rule};
-use crate::parser::Parser;
+pub use crate::parser::Parser;
 use crate::visitor::Visitor;
-use colored::Colorize;
-use std::fs::read_to_string;
-use std::time::Instant;
 
 mod parser;
 mod stream;
@@ -12,25 +9,19 @@ mod cache;
 mod visitor;
 mod node;
 
-fn main() {
-    let start = Instant::now();
-    let source = read_to_string("rspegen.gram").unwrap();
-    let mut peg = Parser::new(source, true);
-    if peg.cache.verbose {
-        println!("Start\tEnd\tResult")
-    }
-    if let Some(grammar) = peg.grammar() {
-        println!(
-            "\n\n{}\n\n{}\n\nFinished in {:?} with {} hit from {} cache",
-            "Generation Result".bold().truecolor(0xff, 0xc6, 0xf4),
-            Visitor::generate(grammar), start.elapsed(),
-            peg.cache.hit, peg.cache.body.len()
-        )
-    }
-}
-
-
 impl Parser {
+    pub fn generate(&mut self) -> Option<(String, Vec<String>)> {
+        let top = self.grammar()?;
+        let types = top.rules.iter()
+            .map(|x| x.rstype.clone())
+            .collect::<Vec<String>>();
+        let result = Visitor {
+            indent: 0,
+            output: vec![],
+        }.grammar(top);
+        Some((result, types))
+    }
+
     fn grammar(&mut self) -> Option<Grammar> {
         let origin = self.stream.cursor;
         memoize!(self, CacheType::Grammar, CacheResult::Grammar, Grammar, {
