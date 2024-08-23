@@ -47,5 +47,5 @@ item[Item]:
 
 atom[Atom]:
     | "(" ~ av=alter_vector ")" { unimplemented!() }
-    | name=NAME { unimplemented!() }
-    | string=STRING { unimplemented!() }
+    | n=NAME { unimplemented!() }
+    | s=STRING { unimplemented!() }

@@ -39,7 +39,8 @@ impl Visitor {
     
     pub fn grammar(&mut self, grammar: Grammar) -> String {
         for each in grammar.rules {
-            self.rule(each)
+            self.rule(each);
+            lp!(self, "");
         }
         self.output.join("\n")
     }
@@ -51,8 +52,10 @@ impl Visitor {
             lp!(self, "memoize!(self, CacheType::{}, CacheResult::{}, {}, {{", rule.rstype, rule.rstype, rule.rstype);
             indent!(self, {
                 lp!(self, "let mut cut = false;");
+                lp!(self, "");
                 for each in rule.alters {
-                    self.alter(each, rule.rstype.clone())
+                    self.alter(each, rule.rstype.clone());
+                    lp!(self, "");
                 }
                 lp!(self, "None");
             });
@@ -73,11 +76,8 @@ impl Visitor {
         indent!(self, {
             lp!(self, "return Some(result)");
         });
-        lp!(self, "}} else {{");
-        indent!(self, {
-            lp!(self, "self.stream.cursor = origin");
-        });
         lp!(self, "}}");
+        lp!(self, "self.stream.cursor = origin;");
         lp!(self, "if cut {{ return None }}");
     }
 
