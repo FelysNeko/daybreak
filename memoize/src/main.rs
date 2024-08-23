@@ -1,7 +1,7 @@
 use crate::cache::{CacheResult, CacheType};
 use crate::node::{Alter, Atom, Grammar, Named, Rule};
 use crate::parser::Parser;
-use crate::visitor::{generate, Visitor};
+use crate::visitor::Visitor;
 use colored::Colorize;
 use std::fs::read_to_string;
 use std::time::Instant;
