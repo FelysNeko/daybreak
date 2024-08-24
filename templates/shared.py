@@ -22,9 +22,9 @@ class Generator:
         finally:
             self.level -= n
 
-    def print(self, *args: str) -> None:
+    def print(self, *args: str, end: str = '\n') -> None:
         if args:
             print('    ' * self.level, end='')
-            print(*args)
+            print(*args, end=end)
         else:
-            print()
+            print(end=end)

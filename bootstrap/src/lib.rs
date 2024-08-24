@@ -25,7 +25,7 @@ pub fn parse(input: String, v: bool) -> Result<PegInfo, &'static str> {
             hit: 0,
         },
     };
-    let grammar = match parser.grammar() { 
+    let grammar = match parser.grammar() {
         Some(gram) => gram,
         None => return Err("Parsing failed due to syntax error")
     };

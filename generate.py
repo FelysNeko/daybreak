@@ -9,3 +9,4 @@ from templates import rust
 rust.Parser(peg).generate()
 rust.Node(peg).generate()
 rust.Cache(peg).generate()
+rust.Main(peg).generate()
