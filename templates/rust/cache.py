@@ -29,28 +29,6 @@ macro_rules! memoize {
     };
 }
 '''
-    __body_cachetype = '''
-#[derive(Eq, PartialEq, Hash, Clone, Copy, Debug)]
-pub enum CacheType {{
-    Expect(&'static str),
-    String,
-    Inline,
-    Name,
-{cachetype}
-}}
-'''
-    __cachetype_template = '    {node},'
-    __body_cacheresult = '''
-#[derive(Clone)]
-pub enum CacheResult {{
-    Expect(Option<()>),
-    String(Option<String>),
-    Inline(Option<String>),
-    Name(Option<String>),
-{cacheresult}
-}}
-'''
-    __cacheresult_template = '    {node}(Option<{node}>),'
     __body_cache = '''
 pub struct Cache {
     pub body: HashMap<(usize, CacheType), (CacheResult, usize)>,
@@ -82,20 +60,6 @@ impl Cache {
     }
 }
 '''
-    __body_debug_cachereuslt = '''
-impl Debug for CacheResult {{
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {{
-        match self {{
-            CacheResult::Expect(r) => write!(f, "{{:?}}", r),
-            CacheResult::String(r) => write!(f, "{{:?}}", r),
-            CacheResult::Inline(r) => write!(f, {{:?}}", r),
-            CacheResult::Name(r) => write!(f, "{{:?}}", r),
-{debug}
-        }}
-    }}
-}}
-'''
-    __debug_cachereuslt_template = ' '*12 + 'CacheResult::{node}(r) => write!(f, "{{:?}}", r),'
 
     def __init__(self, peg) -> None:
         super().__init__(peg)
@@ -104,13 +68,48 @@ impl Debug for CacheResult {{
         self.print(CLAIM)
         self.print(self.__body_import)
         self.print(self.__body_macro)
-        cachetype = '\n'\
-            .join(self.__cachetype_template.format(node=each) for each in self.node)
-        self.print(self.__body_cachetype.format(cachetype=cachetype))
-        cacheresult = '\n'\
-            .join(self.__cacheresult_template.format(node=each) for each in self.node)
-        self.print(self.__body_cacheresult.format(cacheresult=cacheresult))
         self.print(self.__body_cache)
-        debug = '\n'\
-            .join(self.__debug_cachereuslt_template.format(node=each) for each in self.node)
-        self.print(self.__body_debug_cachereuslt.format(debug=debug))
+
+        self.print()
+        self.print('#[derive(Eq, PartialEq, Hash, Clone, Copy, Debug)]')
+        self.print('pub enum CacheType {')
+        with self.indent():
+            self.print('Expect(&\'static str),')
+            self.print('String,')
+            self.print('Inline,')
+            self.print('Name,')
+            for each in self.node:
+                self.print(f'{each},')
+        self.print('}')
+        self.print()
+
+        self.print()
+        self.print('#[derive(Clone)]')
+        self.print('pub enum CacheResult {')
+        with self.indent():
+            self.print('Expect(Option<()>)')
+            self.print('String(Option<String>)')
+            self.print('Inline(Option<String>)')
+            self.print('Name(Option<String>)')
+            for each in self.node:
+                self.print(f'{each}(Option<String>)')
+        self.print('}')
+        self.print()
+
+        self.print()
+        self.print('impl Debug for CacheResult {')
+        with self.indent():
+            self.print('fn fmt(&self, f: &mut Formatter<\'_>) -> std::fmt::Result {')
+            with self.indent():
+                self.print('match self {')
+                with self.indent():
+                    self.print('CacheResult::Expect(r) => write!(f, "{{:?}}", r),')
+                    self.print('CacheResult::String(r) => write!(f, "{{:?}}", r),')
+                    self.print('CacheResult::Inline(r) => write!(f, "{{:?}}", r),')
+                    self.print('CacheResult::Name(r) => write!(f, "{{:?}}", r),')
+                    for each in self.node:
+                        self.print(f'CacheResult::{each}(r) => write!(f, "{{:?}}", r),')
+                self.print('}')
+            self.print('}')
+        self.print('}')
+        self.print()
