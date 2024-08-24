@@ -1,11 +1,9 @@
 use std::collections::HashMap;
 use crate::cache::{Cache, CacheResult, CacheType};
 use crate::node::{Alter, Atom, Grammar, Named, Rule};
-use crate::parser::Parser;
-use crate::stream::Stream;
+use crate::parser::{Parser, Stream};
 
 mod parser;
-mod stream;
 mod cache;
 mod node;
 
