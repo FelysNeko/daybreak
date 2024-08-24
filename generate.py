@@ -1,17 +1,22 @@
-import interface
+import binding
 
 path = 'rspegen.gram'
 header = f'// generated from {path} by generate.py\n'
+with open(path) as rspegen:
+    content = rspegen.read()
 
 try:
-    core, types = interface.generate(path, False)
+    peg = binding.parse(content, False)
 except Exception as error:
     try:
-        interface.generate(path, True)
+        binding.parse(content, True)
     finally:
         print(f'\033[91m{error}\033[0m')
         exit(1)
     
+import json
+tree = json.loads(peg.json)
+print(tree)
 
 # generate node.rs
 node_template = '''
@@ -35,7 +40,7 @@ impl From<CacheResult> for Option<{nt}> {{
     }}
 }}
 '''
-fmt_node_list = [node_template.format(nt=each) for each in types]
+fmt_node_list = [node_template.format(nt=each) for each in peg.node]
 node_body = '\n'.join(fmt_node_list)
 node = header + '''
 use crate::cache::CacheResult;
@@ -49,10 +54,10 @@ visitor_template = '''
         todo!()
     }}
 '''
-fmt_visitor_list = [visitor_template.format(nt_lower=each.lower(), nt=each) for each in types]
+fmt_visitor_list = [visitor_template.format(nt_lower=each.lower(), nt=each) for each in peg.node]
 visitor_body = '\n'.join(fmt_visitor_list)
 visitor = header + '''
-use crate::node::{''' + ', '.join(types) + '''};
+use crate::node::{''' + ', '.join(peg.node) + '''};
 
 pub struct Visitor {
     pub indent: usize,
@@ -90,10 +95,10 @@ impl Visitor {
 
 
 # generate main.rs
-main_body = core
+main_body = peg.json
 main = header + '''
 use crate::cache::{CacheResult, CacheType};
-use crate::node::{''' + ', '.join(types) + '''};
+use crate::node::{''' + ', '.join(peg.node) + '''};
 use crate::parser::Parser;
 use crate::visitor::Visitor;
 
@@ -281,19 +286,19 @@ impl Stream {
 
 # generate cache.rs
 ct_template = '    {nt},'
-fmt_ct_list = [ct_template.format(nt=each) for each in types]
+fmt_ct_list = [ct_template.format(nt=each) for each in peg.node]
 ct_body = '\n'.join(fmt_ct_list)
 
 cr_template = '    {nt}(Option<{nt}>),'
-fmt_cr_list = [cr_template.format(nt=each) for each in types]
+fmt_cr_list = [cr_template.format(nt=each) for each in peg.node]
 cr_body = '\n'.join(fmt_cr_list)
 
 cr_debug_template = '            CacheResult::{nt}(r) => write!(f, "{{:?}}", r),'
-fmt_cr_debug_list = [cr_debug_template.format(nt=each) for each in types]
+fmt_cr_debug_list = [cr_debug_template.format(nt=each) for each in peg.node]
 cr_debug_body = '\n'.join(fmt_cr_debug_list)
 
 cache = header + '''
-use crate::node::{''' + ', '.join(types) + '''};
+use crate::node::{''' + ', '.join(peg.node) + '''};
 use colored::Colorize;
 use std::collections::HashMap;
 use std::fmt::{Debug, Formatter};

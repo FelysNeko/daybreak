@@ -1,8 +1,8 @@
 use crate::cache::CacheResult;
 use std::fmt::{Debug, Formatter};
+use serde::Serialize;
 
-
-#[derive(Clone)]
+#[derive(Clone, Serialize)]
 pub struct Alter {
     pub nameds: Vec<Named>,
     pub inline: String,
@@ -25,7 +25,7 @@ impl From<CacheResult> for Option<Alter> {
 }
 
 
-#[derive(Clone)]
+#[derive(Clone, Serialize)]
 pub enum Atom {
     String(String),
     Name(String),
@@ -50,7 +50,7 @@ impl From<CacheResult> for Option<Atom> {
 }
 
 
-#[derive(Clone)]
+#[derive(Clone, Serialize)]
 pub struct Grammar {
     pub rules: Vec<Rule>,
 }
@@ -71,7 +71,7 @@ impl From<CacheResult> for Option<Grammar> {
 }
 
 
-#[derive(Clone)]
+#[derive(Clone, Serialize)]
 pub enum Named {
     Identifier(String, Atom),
     Anonymous(Atom),
@@ -98,7 +98,7 @@ impl From<CacheResult> for Option<Named> {
 }
 
 
-#[derive(Clone)]
+#[derive(Clone, Serialize)]
 pub struct Rule {
     pub name: String,
     pub rstype: String,

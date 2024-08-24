@@ -1,27 +1,46 @@
-use crate::cache::{CacheResult, CacheType};
+use std::collections::HashMap;
+use crate::cache::{Cache, CacheResult, CacheType};
 use crate::node::{Alter, Atom, Grammar, Named, Rule};
-pub use crate::parser::Parser;
-use crate::visitor::Visitor;
+use crate::parser::Parser;
+use crate::stream::Stream;
 
 mod parser;
 mod stream;
 mod cache;
-mod visitor;
 mod node;
 
-impl Parser {
-    pub fn generate(&mut self) -> Option<(String, Vec<String>)> {
-        let top = self.grammar()?;
-        let types = top.rules.iter()
-            .map(|x| x.rstype.clone())
-            .collect::<Vec<String>>();
-        let result = Visitor {
-            indent: 0,
-            output: vec![],
-        }.grammar(top);
-        Some((result, types))
-    }
 
+pub struct PegInfo {
+    pub json: String,
+    pub node: Vec<String>
+}
+
+pub fn parse(input: String, v: bool) -> Result<PegInfo, &'static str> {
+    let mut parser = Parser {
+        stream: Stream {
+            body: input,
+            cursor: 0,
+        },
+        cache: Cache {
+            body: HashMap::new(),
+            verbose: v,
+            hit: 0,
+        },
+    };
+    let grammar = match parser.grammar() { 
+        Some(gram) => gram,
+        None => return Err("Parsing failed due to syntax error")
+    };
+    let json = serde_json::to_string(&grammar)
+        .map_err(|_| "Json serialization failed due to serde")?;
+    let node = grammar.rules.iter()
+        .map(|x| x.rstype.clone())
+        .collect::<Vec<String>>();
+    Ok(PegInfo { json, node, })
+}
+
+
+impl Parser {
     fn grammar(&mut self) -> Option<Grammar> {
         let origin = self.stream.cursor;
         memoize!(self, CacheType::Grammar, CacheResult::Grammar, Grammar, {
