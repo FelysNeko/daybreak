@@ -4,9 +4,7 @@ pub struct Grammar {
     pub rules: RuleVector,
 }
 
-
 pub type RuleVector = Vec<Rule>;
-
 
 #[derive(Clone, Debug, Serialize)]
 pub struct Rule {
@@ -14,19 +12,15 @@ pub struct Rule {
     pub alters: AlterCollapse,
 }
 
-
 #[derive(Clone, Debug, Serialize)]
 pub struct RuleName {
     pub name: String,
     pub rstype: String,
 }
 
-
 pub type AlterCollapse = Vec<AlterVector>;
 
-
 pub type AlterVector = Vec<Alter>;
-
 
 #[derive(Clone, Debug, Serialize)]
 pub struct Alter{
@@ -34,9 +28,7 @@ pub struct Alter{
     pub inline: String,
 }
 
-
 pub type NamedVector = Vec<Named>;
-
 
 #[derive(Clone, Debug, Serialize)]
 pub enum Named {
@@ -48,14 +40,12 @@ pub enum Named {
     Lookahead(Lookahead)
 }
 
-
 #[derive(Clone, Debug, Serialize)]
 pub enum Lookahead {
     Succeed(Atom),
     Fail(Atom),
     Cut,
 }
-
 
 #[derive(Clone, Debug, Serialize)]
 pub enum Item {
@@ -65,7 +55,6 @@ pub enum Item {
     LoopOne(Atom),
     Atom(Atom),
 }
-
 
 #[derive(Clone, Debug, Serialize)]
 pub enum Atom {
