@@ -1,3 +1,80 @@
+"""
+#[derive(Clone, Debug, Serialize)]
+pub struct Grammar {
+    pub rules: RuleVector,
+}
+
+
+pub type RuleVector = Vec<Rule>;
+
+
+#[derive(Clone, Debug, Serialize)]
+pub struct Rule {
+    pub name: RuleName,
+    pub alters: AlterCollapse,
+}
+
+
+#[derive(Clone, Debug, Serialize)]
+pub struct RuleName {
+    pub name: String,
+    pub rstype: String,
+}
+
+
+pub type AlterCollapse = Vec<AlterVector>;
+
+
+pub type AlterVector = Vec<Alter>;
+
+
+#[derive(Clone, Debug, Serialize)]
+pub struct Alter{
+    pub nameds: NamedVector,
+    pub inline: String,
+}
+
+
+pub type NamedVector = Vec<Named>;
+
+
+#[derive(Clone, Debug, Serialize)]
+pub enum Named {
+    Identifier {
+        name: String,
+        item: Item
+    },
+    Anonymous(Item),
+    Lookahead(Lookahead)
+}
+
+
+#[derive(Clone, Debug, Serialize)]
+pub enum Lookahead {
+    Succeed(Atom),
+    Fail(Atom),
+    Cut,
+}
+
+
+#[derive(Clone, Debug, Serialize)]
+pub enum Item {
+    MultiOptional(AlterVector),
+    Optional(Atom),
+    LoopZero(Atom),
+    LoopOne(Atom),
+    Atom(Atom),
+}
+
+
+#[derive(Clone, Debug, Serialize)]
+pub enum Atom {
+    Priority(AlterVector),
+    String(String),
+    Name(String),
+}
+"""
+
 grammar[Grammar]:
     | rv=rule_vector "EOF" { Grammar { rules: rv } }
 

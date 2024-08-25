@@ -1,16 +1,14 @@
+use crate::mapping::*;
+use crate::stable::*;
 use std::collections::HashMap;
-use crate::cache::{Cache, CacheResult, CacheType};
-use crate::node::{Alter, Atom, Grammar, Named, Rule};
-use crate::parser::{Parser, Stream};
 
-mod parser;
-mod cache;
-mod node;
+mod stable;
+mod mapping;
 
 
 pub struct PegInfo {
     pub json: String,
-    pub node: Vec<String>
+    pub node: Vec<String>,
 }
 
 pub fn parse(input: String, v: bool) -> Result<PegInfo, &'static str> {
@@ -34,7 +32,7 @@ pub fn parse(input: String, v: bool) -> Result<PegInfo, &'static str> {
     let node = grammar.rules.iter()
         .map(|x| x.rstype.clone())
         .collect::<Vec<String>>();
-    Ok(PegInfo { json, node, })
+    Ok(PegInfo { json, node })
 }
 
 
@@ -43,6 +41,8 @@ impl Parser {
         let origin = self.stream.cursor;
         memoize!(self, CacheType::Grammar, CacheResult::Grammar, Grammar, {
             if let Some(grammar) = || -> Option<Grammar> {
+                let insert = self.insert()?;
+                self.expect("\n")?;
                 let mut rules = vec![self.rule()?];
 
                 let mut checkpoint = self.stream.cursor;
@@ -57,7 +57,7 @@ impl Parser {
                 self.stream.cursor = checkpoint;
                 
                 self.expect("EOF")?;
-                Some(Grammar { rules })
+                Some(Grammar { insert, rules })
             }() {
                 return Some(grammar);
             } else {
@@ -66,7 +66,24 @@ impl Parser {
             None
         })
     }
-
+    
+    fn insert(&mut self) -> Option<Insert> {
+        let origin = self.stream.cursor;
+        memoize!(self, CacheType::Insert, CacheResult::Insert, Insert, {
+            if let Some(insert) = || -> Option<Insert> {
+                self.expect("\"\"")?;
+                let rust = self.string()?;
+                self.expect("\"\"\n")?;
+                Some(Insert { rust })
+            }() {
+                return Some(insert);
+            } else {
+                self.stream.cursor = origin
+            }
+            None
+        })
+    }
+    
     fn rule(&mut self) -> Option<Rule> {
         let origin = self.stream.cursor;
         memoize!(self, CacheType::Rule, CacheResult::Rule, Rule, {

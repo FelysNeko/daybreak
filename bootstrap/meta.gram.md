@@ -4,7 +4,10 @@ This file describes the parser in the ./src folder. The intuition is to use this
 
 ```
 grammar[Grammar]:
-    | rule (NEWLINE rule)* EOF { Grammar { rules } }
+    | insert NEWLINE rule (NEWLINE rule)* EOF { Grammar { rules } }
+
+insert[Insert]:
+    | "```" INLINE "```" NEWLINE { Insert { inline } }
 
 rule[Rule]:
     | NAME RSTYPE ": " alter NEWLINE {
