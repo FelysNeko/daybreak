@@ -1,4 +1,4 @@
-from typing import IO, Text
+from typing import IO
 from templates.shared import CLAIM, Generator
 
 class Main(Generator):
@@ -30,6 +30,15 @@ fn main() {
     };
     todo!()
 }
+
+macro_rules! chain {
+    ($v:expr, $e:expr) => {
+        {
+            $v.push($e);
+            $v
+        }
+    };
+}
 '''
 
     def __init__(self, peg, file: IO[str] | None = None) -> None:
@@ -37,8 +46,10 @@ fn main() {
 
     def generate(self) -> None:
         self.print(CLAIM)
+        self.print('// modification required')
         self.print(self.__body_import)
         self.print(self.__body_main)
+        self.print('#[allow(unused_mut)]')
         self.print('impl Parser {')
         with self.indent():
             self.grammar(self.json)
@@ -50,7 +61,6 @@ fn main() {
             self.rule(rule)
 
     def rule(self, rule: dict) -> None:
-        self.print()
         rstype = rule['rstype']
         self.print(f'fn {rule['name'].lower()}(&mut self) -> Option<{rstype}> {{')
         with self.indent():
@@ -86,7 +96,7 @@ fn main() {
         if named == 'Cut':
             self.print('cut = true;')
         elif n := named.get('Identifier'):
-            self.print(f'let {n[0]} = ', end='')
+            self.print(f'let mut {n[0]} = ', end='')
             self.atom(n[1])
         elif n := named.get('Anonymous'):
             self.print('', end='')

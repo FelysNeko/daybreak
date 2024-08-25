@@ -1,8 +1,5 @@
-from typing import IO, Text
-from templates.shared import CLAIM, Generator
+// automatically generated from templates
 
-class Parser(Generator):
-    __body_full = '''
 use std::iter::Skip;
 use std::str::Chars;
 use crate::cache::{Cache, CacheResult, CacheType};
@@ -42,7 +39,7 @@ impl Parser {
             }
 
             let s = match s {
-                "NEWLINE" => "\\n",
+                "NEWLINE" => "\n",
                 other => other
             };
             
@@ -89,7 +86,7 @@ impl Parser {
             let mut buffer = String::new();
             while let Some(ch) = self.stream.peek() {
                 self.stream.cursor += 1;
-                if matches!(ch, '\"') {
+                if matches!(ch, '"') {
                     return Some(buffer);
                 } else {
                     buffer.push(ch);
@@ -148,12 +145,4 @@ impl From<CacheResult> for Option<()> {
         }
     }
 }
-'''
 
-    def __init__(self, peg, file: IO[str] | None = None) -> None:
-        super().__init__(peg, file)
-
-    def generate(self) -> None:
-        self.print(CLAIM)
-        self.print(self.__body_full)
-        

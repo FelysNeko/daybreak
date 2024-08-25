@@ -1,4 +1,4 @@
-PEG = 'peg'
+PEG = 'parser'
 DOTGRAM = 'rspegen.gram'
 
 def debug_rspegen():
@@ -36,7 +36,7 @@ def init_rspegen():
         rust.Main(peg, f).generate()
 
 
-def update_rspegen(target):
+def update_rspegen(which):
     import binding
     with open(DOTGRAM) as file:
         grammar = file.read()
@@ -47,19 +47,8 @@ def update_rspegen(target):
     src = target.joinpath('src')
 
     from templates import rust
-    match target:
-        case 'parser.rs':
-            with open(src.joinpath('parser.rs'), 'w') as f:
-                rust.Parser(peg, f).generate()
-        case 'node.rs':
-            with open(src.joinpath('node.rs'), 'w') as f:
-                rust.Node(peg, f).generate()
-        case 'cache.rs':
-            with open(src.joinpath('cache.rs'), 'w') as f:
-                rust.Cache(peg, f).generate()
-        case 'main.rs':
-            with open(src.joinpath('main.rs'), 'w') as f:
-                rust.Main(peg, f).generate()
+    with open(src.joinpath('main.rs'), 'w') as f:
+        rust.Main(peg, f).generate()
 
 
 
@@ -70,7 +59,6 @@ subparsers = argp.add_subparsers(dest='command')
 initcmd = subparsers.add_parser('init')
 debugcmd = subparsers.add_parser('debug')
 updatecmd = subparsers.add_parser('update')
-updatecmd.add_argument('file', choices=['parser.rs', 'node.rs', 'cache.rs', 'main.rs'])
 
 
 if __name__ == '__main__':
@@ -80,4 +68,4 @@ if __name__ == '__main__':
     elif args.command == 'debug':
         debug_rspegen()
     elif args.command == 'update':
-        update_rspegen(args.file)
+        update_rspegen()
