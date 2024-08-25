@@ -34,3 +34,8 @@ This is the prerequisite of future [Felys](https://github.com/felys-lang/felys) 
 ## License
 
 Distributed under the terms of the [MIT License](https://github.com/FelysNeko/rspegen/blob/main/LICENSE).
+
+## Copyright
+
+© All rights reserved by FelysNeko
+
