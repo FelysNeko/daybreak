@@ -41,7 +41,9 @@ impl Parser {
         let origin = self.stream.cursor;
         memoize!(self, CacheType::Grammar, CacheResult::Grammar, Grammar, {
             if let Some(grammar) = || -> Option<Grammar> {
-                let insert = self.insert()?;
+                self.expect("\"\"")?;
+                let insert = self.string()?;
+                self.expect("\"\"\n")?;
                 self.expect("\n")?;
                 let mut rules = vec![self.rule()?];
 
@@ -60,23 +62,6 @@ impl Parser {
                 Some(Grammar { insert, rules })
             }() {
                 return Some(grammar);
-            } else {
-                self.stream.cursor = origin
-            }
-            None
-        })
-    }
-    
-    fn insert(&mut self) -> Option<Insert> {
-        let origin = self.stream.cursor;
-        memoize!(self, CacheType::Insert, CacheResult::Insert, Insert, {
-            if let Some(insert) = || -> Option<Insert> {
-                self.expect("\"\"")?;
-                let rust = self.string()?;
-                self.expect("\"\"\n")?;
-                Some(Insert { rust })
-            }() {
-                return Some(insert);
             } else {
                 self.stream.cursor = origin
             }
