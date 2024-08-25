@@ -1,3 +1,4 @@
+from typing import IO
 from templates.shared import CLAIM, Generator
 
 class Cache(Generator):
@@ -61,8 +62,8 @@ impl Cache {
 }
 '''
 
-    def __init__(self, peg) -> None:
-        super().__init__(peg)
+    def __init__(self, peg, file: IO[str] | None = None) -> None:
+        super().__init__(peg, file)
 
     def generate(self) -> None:
         self.print(CLAIM)
@@ -74,11 +75,7 @@ impl Cache {
         self.print('#[derive(Eq, PartialEq, Hash, Clone, Copy, Debug)]')
         self.print('pub enum CacheType {')
         with self.indent():
-            self.print('Expect(&\'static str),')
-            self.print('String,')
-            self.print('Inline,')
-            self.print('Name,')
-            for each in self.node:
+            for each in self.node + ['Expect(&\'static str)', 'String', 'Inline', 'Name']:
                 self.print(f'{each},')
         self.print('}')
         self.print()
@@ -103,11 +100,7 @@ impl Cache {
             with self.indent():
                 self.print('match self {')
                 with self.indent():
-                    self.print('CacheResult::Expect(r) => write!(f, "{{:?}}", r),')
-                    self.print('CacheResult::String(r) => write!(f, "{{:?}}", r),')
-                    self.print('CacheResult::Inline(r) => write!(f, "{{:?}}", r),')
-                    self.print('CacheResult::Name(r) => write!(f, "{{:?}}", r),')
-                    for each in self.node:
+                    for each in self.node + ['Expect', 'String', 'Inline', 'Name']:
                         self.print(f'CacheResult::{each}(r) => write!(f, "{{:?}}", r),')
                 self.print('}')
             self.print('}')

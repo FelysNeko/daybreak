@@ -1,3 +1,4 @@
+from typing import IO, Text
 from templates.shared import CLAIM, Generator
 
 class Parser(Generator):
@@ -144,8 +145,8 @@ impl From<CacheResult> for Option<()> {
 }
 '''
 
-    def __init__(self, peg) -> None:
-        super().__init__(peg)
+    def __init__(self, peg, file: IO[str] | None = None) -> None:
+        super().__init__(peg, file)
 
     def generate(self) -> None:
         self.print(CLAIM)

@@ -20,8 +20,8 @@ impl From<CacheResult> for Option<{node}> {{
 }}
 '''
 
-    def __init__(self, peg) -> None:
-        super().__init__(peg)
+    def __init__(self, peg, file = None) -> None:
+        super().__init__(peg, file)
 
     def generate(self) -> None:
         self.print(CLAIM)

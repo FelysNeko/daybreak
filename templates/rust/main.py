@@ -1,3 +1,4 @@
+from typing import IO, Text
 from templates.shared import CLAIM, Generator
 
 class Main(Generator):
@@ -12,12 +13,13 @@ mod cache;
 mod node;
 '''
 
-    def __init__(self, peg) -> None:
-        super().__init__(peg)
+    def __init__(self, peg, file: IO[str] | None = None) -> None:
+        super().__init__(peg, file)
 
     def generate(self) -> None:
         self.print(CLAIM)
         self.print(self.__body_import)
+        self.print('\nfn main() {}\n')
         self.print('impl Parser {')
         with self.indent():
             self.grammar(self.json)
@@ -41,7 +43,7 @@ mod node;
                 for alter in rule['alters']:
                     self.alter(alter, rstype)
                 self.print('None')
-            self.print('}')
+            self.print('});')
         self.print('}')
         self.print()
 
@@ -75,11 +77,11 @@ mod node;
 
     def atom(self, atom: dict) -> None:
         if a := atom.get('String'):
-            print(f'self.expect("{a}")?;')
+            print(f'self.expect("{a}")?;', file=self.file)
         elif a := atom.get('Name'):
             if a=='STRING' or a=='INLINE' or a=='NAME':
-                print(f'self.{a.lower()}()?;')
+                print(f'self.{a.lower()}()?;', file=self.file)
             else: 
-                print(f'self.{a}()?;')
+                print(f'self.{a}()?;', file=self.file)
         else:
             raise
