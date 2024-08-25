@@ -1,7 +1,13 @@
 """
 #[derive(Clone, Debug, Serialize)]
 pub struct Grammar {
+    pub insert: Insert,
     pub rules: RuleVector,
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub struct Insert {
+    pub body: String,
 }
 
 pub type RuleVector = Vec<Rule>;
@@ -75,7 +81,10 @@ macro_rules! chain {
 """
 
 grammar[Grammar]:
-    | rv=rule_vector "EOF" { Grammar { rules: rv } }
+    | i=insert "NEWLINE" rv=rule_vector "EOF" { Grammar { insert: i, rules: rv } }
+
+insert[Insert]:
+    | "QUOTATION" "QUOTATION" s=STRING "QUOTATION" "QUOTATION" "NEWLINE" { Insert { body: s } }
 
 rule_vector[RuleVector]:
     | r=rule "NEWLINE" rv=rule_vector { chain!(rv, r) }

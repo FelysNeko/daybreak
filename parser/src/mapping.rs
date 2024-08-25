@@ -6,7 +6,13 @@ use std::fmt::{Debug, Formatter};
 
 #[derive(Clone, Debug, Serialize)]
 pub struct Grammar {
+    pub insert: Insert,
     pub rules: RuleVector,
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub struct Insert {
+    pub body: String,
 }
 
 pub type RuleVector = Vec<Rule>;
@@ -82,6 +88,15 @@ impl From<CacheResult> for Option<Grammar> {
     fn from(value: CacheResult) -> Self {
         match value {
             CacheResult::Grammar(inner) => inner,
+            _ => panic!("cache not matched")
+        }
+    }
+}
+
+impl From<CacheResult> for Option<Insert> {
+    fn from(value: CacheResult) -> Self {
+        match value {
+            CacheResult::Insert(inner) => inner,
             _ => panic!("cache not matched")
         }
     }
@@ -193,6 +208,7 @@ pub enum CacheType {
     Inline,
     Name,
     Grammar,
+    Insert,
     RuleVector,
     Rule,
     RuleName,
@@ -213,6 +229,7 @@ pub enum CacheResult {
     Inline(Option<String>),
     Name(Option<String>),
     Grammar(Option<Grammar>),
+    Insert(Option<Insert>),
     RuleVector(Option<RuleVector>),
     Rule(Option<Rule>),
     RuleName(Option<RuleName>),
@@ -234,6 +251,7 @@ impl Debug for CacheResult {
             CacheResult::Inline(r) => write!(f, "{:?}", r),
             CacheResult::Name(r) => write!(f, "{:?}", r),
             CacheResult::Grammar(r) => write!(f, "{:?}", r),
+            CacheResult::Insert(r) => write!(f, "{:?}", r),
             CacheResult::RuleVector(r) => write!(f, "{:?}", r),
             CacheResult::Rule(r) => write!(f, "{:?}", r),
             CacheResult::RuleName(r) => write!(f, "{:?}", r),

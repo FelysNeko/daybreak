@@ -34,9 +34,35 @@ impl Parser {
             let mut cut = false;
 
             if let Some(result) = || -> Option<Grammar> {
+                let mut i = self.insert()?;
+                self.expect("NEWLINE")?;
                 let mut rv = self.rule_vector()?;
                 self.expect("EOF")?;
-                Some(Grammar { rules: rv })
+                Some(Grammar { insert: i, rules: rv })
+            }() {
+                return Some(result)
+            } else {
+                self.stream.cursor = origin
+            }
+            if cut { return None }
+
+            None
+        })
+    }
+
+    fn insert(&mut self) -> Option<Insert> {
+        let origin = self.stream.cursor;
+        memoize!(self, CacheType::Insert, CacheResult::Insert, Insert, {
+            let mut cut = false;
+
+            if let Some(result) = || -> Option<Insert> {
+                self.expect("QUOTATION")?;
+                self.expect("QUOTATION")?;
+                let mut s = self.string()?;
+                self.expect("QUOTATION")?;
+                self.expect("QUOTATION")?;
+                self.expect("NEWLINE")?;
+                Some(Insert { body: s })
             }() {
                 return Some(result)
             } else {

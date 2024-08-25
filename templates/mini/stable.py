@@ -98,6 +98,7 @@ impl Parser {
 
             let s = match s {
                 "NEWLINE" => "\\n",
+                "QUOTATION" => "\\"",
                 other => other
             };
             
