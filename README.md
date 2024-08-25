@@ -25,7 +25,7 @@ cargo run --manifest-path parser/Cargo.toml
 
 ## Todo
 
-Only the the parser AST is now ready to go. More python scripts are needed to generate actual code that make this parser work. The mini parser generator is not powerful and flexible enough, and does not bootstrap.
+Only the the parser AST is now ready to go. More python scripts are needed to generate actual code that make this parser work. The mini parser generator is not powerful nor flexible enough, and does not bootstrap.
 
 ## Appendix
 
