@@ -1,24 +1,19 @@
 // automatically generated from templates
-// modification required
 
+use crate::mapping::*;
+use crate::stable::*;
 use std::collections::HashMap;
 use std::fs::read_to_string;
-use std::time::Instant;
-use crate::cache::{Cache, CacheResult, CacheType};
-use crate::node::*;
-use crate::parser::{Parser, Stream};
 
-mod parser;
-mod cache;
-mod node;
+mod stable;
+mod mapping;
 
 
 fn main() {
     let input = read_to_string("../rspegen.gram").unwrap();
-    let v = false;
+    let v = true;
 
-    let start = Instant::now();
-    let mut parser = Parser {
+    Parser {
         stream: Stream {
             body: input,
             cursor: 0,
@@ -28,18 +23,7 @@ fn main() {
             verbose: v,
             hit: 0,
         },
-    };
-    println!("{:?}", parser.grammar().unwrap());
-    println!("{:?}", start.elapsed())
-}
-
-macro_rules! chain {
-    ($v:expr, $e:expr) => {
-        {
-            $v.push($e);
-            $v
-        }
-    };
+    }.grammar();
 }
 
 #[allow(unused_mut)]

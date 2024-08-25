@@ -2,22 +2,21 @@ from typing import IO
 from templates.shared import CLAIM, Generator
 
 class Main(Generator):
-    __body_import = '''
+    __prelude = '''
+use crate::mapping::*;
+use crate::stable::*;
 use std::collections::HashMap;
-use crate::cache::{Cache, CacheResult, CacheType};
-use crate::node::*;
-use crate::parser::{Parser, Stream};
+use std::fs::read_to_string;
 
-mod parser;
-mod cache;
-mod node;
-'''
-    __body_main = '''
+mod stable;
+mod mapping;
+
+
 fn main() {
-    let input = String::new();
+    let input = read_to_string("../rspegen.gram").unwrap();
     let v = true;
 
-    let mut parser = Parser {
+    Parser {
         stream: Stream {
             body: input,
             cursor: 0,
@@ -27,17 +26,7 @@ fn main() {
             verbose: v,
             hit: 0,
         },
-    };
-    todo!()
-}
-
-macro_rules! chain {
-    ($v:expr, $e:expr) => {
-        {
-            $v.push($e);
-            $v
-        }
-    };
+    }.grammar();
 }
 '''
 
@@ -46,9 +35,7 @@ macro_rules! chain {
 
     def generate(self) -> None:
         self.print(CLAIM)
-        self.print('// modification required')
-        self.print(self.__body_import)
-        self.print(self.__body_main)
+        self.print(self.__prelude)
         self.print('#[allow(unused_mut)]')
         self.print('impl Parser {')
         with self.indent():

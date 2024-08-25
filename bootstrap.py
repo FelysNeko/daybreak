@@ -25,18 +25,16 @@ def init_rspegen():
     subprocess.run(['cargo', 'add', 'serde', '--features', 'derive', '--manifest-path', cargo])
     subprocess.run(['cargo', 'add', 'serde_json', '--manifest-path', cargo])
 
-    from templates import rust
-    with open(src.joinpath('parser.rs'), 'w') as f:
-        rust.Parser(peg, f).generate()
-    with open(src.joinpath('node.rs'), 'w') as f:
-        rust.Node(peg, f).generate()
-    with open(src.joinpath('cache.rs'), 'w') as f:
-        rust.Cache(peg, f).generate()
+    from templates import mini
     with open(src.joinpath('main.rs'), 'w') as f:
-        rust.Main(peg, f).generate()
+        mini.Main(peg, f).generate()
+    with open(src.joinpath('mapping.rs'), 'w') as f:
+        mini.Mapping(peg, f).generate()
+    with open(src.joinpath('stable.rs'), 'w') as f:
+        mini.Stable(peg, f).generate()
 
 
-def update_rspegen(which):
+def update_rspegen():
     import binding
     with open(DOTGRAM) as file:
         grammar = file.read()
@@ -46,10 +44,13 @@ def update_rspegen(which):
     target = pathlib.Path(PEG)
     src = target.joinpath('src')
 
-    from templates import rust
+    from templates import mini
     with open(src.joinpath('main.rs'), 'w') as f:
-        rust.Main(peg, f).generate()
-
+        mini.Main(peg, f).generate()
+    with open(src.joinpath('mapping.rs'), 'w') as f:
+        mini.Mapping(peg, f).generate()
+    with open(src.joinpath('stable.rs'), 'w') as f:
+        mini.Stable(peg, f).generate()
 
 
 import argparse
