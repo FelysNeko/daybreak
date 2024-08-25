@@ -1,7 +1,6 @@
 # The Base Case
 
-This file is describe to the parser in the ./src folder. The intuition is to use this mini peg parser to generate a
-fully functional peg parser. Note that this parser does not parse itself.
+This file describes the parser in the ./src folder. The intuition is to use this mini peg parser to generate a fully functional peg parser. Note that this parser does not parse itself.
 
 ```
 grammar[Grammar]:
@@ -28,9 +27,7 @@ atom[Atom]:
     | NAME { Atom::Name(name) }
 ```
 
-The cpython [metagrammar.gram](https://github.com/python/cpython/blob/main/Tools/peg_generator/pegen/metagrammar.gram)
-is used as an example. By removing the metadata, `!` and `?` syntax, and extra whitespaces from it, you will get the
-following which is parsable by this mini parser.
+The cpython [metagrammar.gram](https://github.com/python/cpython/blob/main/Tools/peg_generator/pegen/metagrammar.gram) is used as an example. By removing the metadata, `!` and `?` syntax, and extra whitespaces from it, you will get the following which is parsable by this mini parser.
 
 ```
 start[Grammar]: grammar ENDMARKER { grammar }

@@ -1,18 +1,21 @@
-def debug_rspegen(dotgram):
+PEG = 'peg'
+DOTGRAM = 'rspegen.gram'
+
+def debug_rspegen():
     import binding
-    with open(dotgram) as file:
+    with open(DOTGRAM) as file:
         grammar = file.read()
     binding.parse(grammar, True)
 
 
-def init_rspegen(dotgram):
+def init_rspegen():
     import binding
-    with open(dotgram) as file:
+    with open(DOTGRAM) as file:
         grammar = file.read()
     peg = binding.parse(grammar, False)
 
     import pathlib
-    target = pathlib.Path('peg')
+    target = pathlib.Path(PEG)
     src = target.joinpath('src')
     cargo = target.joinpath('Cargo.toml')
 
@@ -33,14 +36,14 @@ def init_rspegen(dotgram):
         rust.Main(peg, f).generate()
 
 
-def update_rspegen(dotgram, target):
+def update_rspegen(target):
     import binding
-    with open(dotgram) as file:
+    with open(DOTGRAM) as file:
         grammar = file.read()
     peg = binding.parse(grammar, False)
 
     import pathlib
-    target = pathlib.Path('peg')
+    target = pathlib.Path(PEG)
     src = target.joinpath('src')
 
     from templates import rust
@@ -71,11 +74,10 @@ updatecmd.add_argument('file', choices=['parser.rs', 'node.rs', 'cache.rs', 'mai
 
 
 if __name__ == '__main__':
-    dotgram = 'rspegen.gram'
     args = argp.parse_args()
     if args.command == 'init':
-        init_rspegen(dotgram)
+        init_rspegen()
     elif args.command == 'debug':
-        debug_rspegen(dotgram)
+        debug_rspegen()
     elif args.command == 'update':
-        update_rspegen(dotgram, args.file)
+        update_rspegen(args.file)
