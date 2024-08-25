@@ -1,4 +1,4 @@
-PEG = 'parser'
+TARGET = 'parser'
 DOTGRAM = 'rspegen.gram'
 
 def debug_rspegen():
@@ -15,7 +15,7 @@ def init_rspegen():
     peg = binding.parse(grammar, False)
 
     import pathlib
-    target = pathlib.Path(PEG)
+    target = pathlib.Path(TARGET)
     src = target.joinpath('src')
     cargo = target.joinpath('Cargo.toml')
 
@@ -41,7 +41,7 @@ def update_rspegen():
     peg = binding.parse(grammar, False)
 
     import pathlib
-    target = pathlib.Path(PEG)
+    target = pathlib.Path(TARGET)
     src = target.joinpath('src')
 
     from templates import mini
@@ -57,9 +57,9 @@ import argparse
 argp = argparse.ArgumentParser(description='Parser Generator') 
 subparsers = argp.add_subparsers(dest='command')
 
-initcmd = subparsers.add_parser('init')
-debugcmd = subparsers.add_parser('debug')
-updatecmd = subparsers.add_parser('update')
+subparsers.add_parser('init')
+subparsers.add_parser('debug')
+subparsers.add_parser('update')
 
 
 if __name__ == '__main__':
