@@ -12,6 +12,25 @@ mod parser;
 mod cache;
 mod node;
 '''
+    __body_main = '''
+fn main() {
+    let input = String::new();
+    let v = true;
+
+    let mut parser = Parser {
+        stream: Stream {
+            body: input,
+            cursor: 0,
+        },
+        cache: Cache {
+            body: HashMap::new(),
+            verbose: v,
+            hit: 0,
+        },
+    };
+    todo!()
+}
+'''
 
     def __init__(self, peg, file: IO[str] | None = None) -> None:
         super().__init__(peg, file)
@@ -19,7 +38,7 @@ mod node;
     def generate(self) -> None:
         self.print(CLAIM)
         self.print(self.__body_import)
-        self.print('\nfn main() {}\n')
+        self.print(self.__body_main)
         self.print('impl Parser {')
         with self.indent():
             self.grammar(self.json)
@@ -33,7 +52,7 @@ mod node;
     def rule(self, rule: dict) -> None:
         self.print()
         rstype = rule['rstype']
-        self.print(f'fn {rstype.lower()}(&mut self) -> Option<{rstype}> {{')
+        self.print(f'fn {rule['name'].lower()}(&mut self) -> Option<{rstype}> {{')
         with self.indent():
             self.print('let origin = self.stream.cursor;')
             self.print(f'memoize!(self, CacheType::{rstype}, CacheResult::{rstype}, {rstype}, {{')
@@ -43,7 +62,7 @@ mod node;
                 for alter in rule['alters']:
                     self.alter(alter, rstype)
                 self.print('None')
-            self.print('});')
+            self.print('})')
         self.print('}')
         self.print()
 
@@ -65,7 +84,7 @@ mod node;
 
     def named(self, named: dict) -> None:
         if named == 'Cut':
-            self.print('let cut = true;')
+            self.print('cut = true;')
         elif n := named.get('Identifier'):
             self.print(f'let {n[0]} = ', end='')
             self.atom(n[1])

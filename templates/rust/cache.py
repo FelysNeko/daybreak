@@ -84,12 +84,12 @@ impl Cache {
         self.print('#[derive(Clone)]')
         self.print('pub enum CacheResult {')
         with self.indent():
-            self.print('Expect(Option<()>)')
-            self.print('String(Option<String>)')
-            self.print('Inline(Option<String>)')
-            self.print('Name(Option<String>)')
+            self.print('Expect(Option<()>),')
+            self.print('String(Option<String>),')
+            self.print('Inline(Option<String>),')
+            self.print('Name(Option<String>),')
             for each in self.node:
-                self.print(f'{each}(Option<String>)')
+                self.print(f'{each}(Option<{each}>),')
         self.print('}')
         self.print()
 
