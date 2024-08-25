@@ -15,10 +15,10 @@ mod node;
 
 fn main() {
     let input = read_to_string("../rspegen.gram").unwrap();
-    let v = true;
+    let v = false;
 
     let start = Instant::now();
-    Parser {
+    let mut parser = Parser {
         stream: Stream {
             body: input,
             cursor: 0,
@@ -28,7 +28,8 @@ fn main() {
             verbose: v,
             hit: 0,
         },
-    }.grammar();
+    };
+    println!("{:?}", parser.grammar().unwrap());
     println!("{:?}", start.elapsed())
 }
 

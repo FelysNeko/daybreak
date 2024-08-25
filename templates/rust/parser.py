@@ -31,7 +31,7 @@ pub struct Parser {
 
 #[allow(clippy::redundant_closure_call)]
 impl Parser {
-    pub(crate) fn expect(&mut self, s: &'static str) -> Option<()> {
+    pub fn expect(&mut self, s: &'static str) -> Option<()> {
         memoize!(self, CacheType::Expect(s), CacheResult::Expect, (), {
             if s == "EOF" {
                 return if self.stream.peek().is_none() {
@@ -59,7 +59,7 @@ impl Parser {
         })
     }
 
-    pub(crate) fn name(&mut self) -> Option<String> {
+    pub fn name(&mut self) -> Option<String> {
         memoize!(self, CacheType::Name, CacheResult::Name, String, {
             let mut buffer = String::new();
             while let Some(ch) = self.stream.peek() {
@@ -78,7 +78,7 @@ impl Parser {
         })
     }
 
-    pub(crate) fn string(&mut self) -> Option<String> {
+    pub fn string(&mut self) -> Option<String> {
         let origin = self.stream.cursor;
         memoize!(self, CacheType::String, CacheResult::String, String, {
             if self.stream.peek() == Some('"') {
@@ -100,7 +100,7 @@ impl Parser {
         })
     }
 
-    pub(crate) fn inline(&mut self) -> Option<String> {
+    pub fn inline(&mut self) -> Option<String> {
         let origin = self.stream.cursor;
         memoize!(self, CacheType::Inline, CacheResult::Inline, String, {
             if self.stream.peek() == Some('{') {
