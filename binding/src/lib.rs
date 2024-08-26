@@ -9,7 +9,7 @@ pub struct PegInfo {
 
 #[pyfunction]
 fn parse(input: String, v: bool) -> PyResult<PegInfo> {
-    let info = bootstrap::parse(input, v)
+    let info = boot::parse(input, v)
         .map_err(|e| { PyException::new_err(e) })?;
     Ok(PegInfo {
         json: info.json,

@@ -13,7 +13,7 @@ pip3 install maturin
 maturin develop --manifest-path binding/Cargo.toml
 ```
 
-Then run `python3 bootstrap.py update` will update the three files in [parser/src](parser/src) based on [rspegen.gram](rspegen.gram). You can configure the constants in [bootstrap.py](bootstrap.py) to change the target folder and grammar file location. If the update failed, you may want to use `python3 bootstrap.py debug` to see all the parsing result verbosely. The pink logs represent a cache hit. Lastly, run `python3 bootstrap.py init` to generate to the whole [parser](parser) cargo with all dependencies. Again configure the constants to adjust its behaviour.
+Then run `python3 boot.py update` will update the three files in [parser/src](parser/src) based on [rspegen.gram](rspegen.gram). You can configure the constants in [boot.py](boot.py) to change the target folder and grammar file location. If the update failed, you may want to use `python3 boot.py debug` to see all the parsing result verbosely. The pink logs represent a cache hit. Lastly, run `python3 boot.py init` to generate to the whole [parser](parser) cargo with all dependencies. Again configure the constants to adjust its behaviour.
 
 To see whether things get compiled, run:
 

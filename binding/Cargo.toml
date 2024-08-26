@@ -10,4 +10,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 pyo3 = "0.22.2"
-bootstrap = { path = "../bootstrap" }
+boot = { path = "../boot" }
