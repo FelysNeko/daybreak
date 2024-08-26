@@ -8,8 +8,8 @@ CLAIM = '// automatically generated from templates'
 class Generator:
     def __init__(self, peg, file: Optional[IO[Text]] = None) -> None:
         self.json = json.loads(peg.json)
-        self.file = file
         self.node = peg.node
+        self.file = file
         self.level = 0
 
     @abstractmethod
