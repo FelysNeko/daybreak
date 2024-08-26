@@ -1,4 +1,4 @@
-# RsPEGen
+ # RsPEGen
 
 PEG parser generator for multiple languages. 
 
@@ -30,6 +30,10 @@ Only the the parser AST is now ready to go. More python scripts are needed to ge
 Or simple re-implement the whole project, since there are quite a few immature designs.
 
 ## Appendix
+
+The original [packrat parsing thesis](https://pdos.csail.mit.edu/~baford/packrat/thesis/thesis.pdf) by Bryan Ford.
+
+Blogs [PEG parsing series overview](https://medium.com/@gvanrossum_83706/peg-parsing-series-de5d41b2ed60) by Guido van Rossum.
 
 This is the prerequisite of future [Felys](https://github.com/felys-lang/felys) syntax, inspired by [PEP-617](https://peps.python.org/pep-0617/).
 
