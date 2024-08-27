@@ -7,16 +7,18 @@ use crate::mapping::*;
 use crate::stable::*;
 use std::collections::HashMap;
 use std::fs::read_to_string;
+use std::fs::File;
+use std::io::prelude::*;
 
 mod stable;
 mod mapping;
 
 
-fn main() {
-    let input = read_to_string("../rspegen.gram").unwrap();
+fn main() -> std::io::Result<()> {
+    let input = read_to_string("rspegen.gram")?;
     let v = true;
 
-    Parser {
+    let grammar = Parser {
         stream: Stream {
             body: input,
             cursor: 0,
@@ -27,6 +29,14 @@ fn main() {
             hit: 0,
         },
     }.grammar();
+    
+    if let Some(gram) = grammar {
+        let json = serde_json::to_string(&gram)?;
+        let mut file = File::create("ast.json")?;
+        file.write_all(json.as_bytes())?;
+    }
+
+    Ok(())
 }
 '''
 

@@ -1,0 +1,135 @@
+"""
+#[derive(Clone, Debug, Serialize)]
+pub struct Grammar {
+    pub insert: Insert,
+    pub rules: RuleVector,
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub struct Insert {
+    pub body: String,
+}
+
+pub type RuleVector = Vec<Rule>;
+
+#[derive(Clone, Debug, Serialize)]
+pub struct Rule {
+    pub name: RuleName,
+    pub alters: AlterCollapse,
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub struct RuleName {
+    pub name: String,
+    pub rstype: String,
+}
+
+pub type AlterCollapse = Vec<AlterVector>;
+
+pub type AlterVector = Vec<Alter>;
+
+#[derive(Clone, Debug, Serialize)]
+pub struct Alter{
+    pub nameds: NamedVector,
+    pub inline: String,
+}
+
+pub type NamedVector = Vec<Named>;
+
+#[derive(Clone, Debug, Serialize)]
+pub enum Named {
+    Identifier {
+        name: String,
+        item: Item
+    },
+    Anonymous(Item),
+    Lookahead(Lookahead)
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub enum Lookahead {
+    Succeed(Atom),
+    Fail(Atom),
+    Cut,
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub enum Item {
+    MultiOptional(AlterVector),
+    Optional(Atom),
+    LoopZero(Atom),
+    LoopOne(Atom),
+    Atom(Atom),
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub enum Atom {
+    Priority(AlterVector),
+    String(String),
+    Name(String),
+}
+
+#[macro_export]
+macro_rules! chain {
+    ($v:expr, $e:expr) => {
+        {
+            $v.push($e);
+            $v
+        }
+    };
+}
+"""
+
+grammar[Grammar]:
+    | i=insert "NEWLINE" rv=rule_vector "EOF" { Grammar { insert: i, rules: rv } }
+
+insert[Insert]:
+    | "QUOTATION" "QUOTATION" s=STRING "QUOTATION" "QUOTATION" "NEWLINE" { Insert { body: s } }
+
+rule_vector[RuleVector]:
+    | r=rule "NEWLINE" rv=rule_vector { chain!(rv, r) }
+    | r=rule { vec![r] }
+
+rule[Rule]:
+    | rn=rule_name ":" "NEWLINE" ac=alter_collapse "NEWLINE" { Rule { name: rn, alters: ac } }
+    | rn=rule_name ": " av=alter_vector "NEWLINE" { Rule { name: rn, alters: vec![av] } }
+
+rule_name[RuleName]:
+    | n=NAME "[" rst=NAME "]" { RuleName { name: n, rstype: rst } }
+
+alter_collapse[AlterCollapse]:
+    | "    | " av=alter_vector "NEWLINE" ac=alter_collapse { chain!(ac, av) }
+    | "    | " av=alter_vector { vec![av] }
+
+alter_vector[AlterVector]:
+    | a=alter " | " ac=alter_vector { chain!(ac, a) }
+    | a=alter { vec![a] }
+
+alter[Alter]:
+    | nv=named_vector " " i=INLINE { Alter { nameds: nv, inline: i } }
+
+named_vector[NamedVector]:
+    | n=named " " nv=named_vector { chain!(nv, n) }
+    | n=named { vec![n] }
+
+named[Named]:
+    | n=NAME "=" ~ i=item { Named::Identifier { name: n, item: i } }
+    | i=item { Named::Anonymous(i) }
+    | l=lookahead { Named::Lookahead(l) }
+
+lookahead[Lookahead]:
+    | "&" ~ a=atom { Lookahead::Succeed(a) }
+    | "!" ~ a=atom { Lookahead::Fail(a) }
+    | "~" { Lookahead::Cut }
+
+item[Item]:
+    | "[" ~ av=alter_vector "]" { Item::MultiOptional(av) }
+    | a=atom "?" { Item::Optional(a) }
+    | a=atom "*" { Item::LoopZero(a) }
+    | a=atom "+" { Item::LoopOne(a) }
+    | a=atom { Item::Atom(a) }
+
+atom[Atom]:
+    | "(" ~ av=alter_vector ")" { Atom::Priority(av) }
+    | n=NAME { Atom::Name(n) }
+    | s=STRING { Atom::String(s) }
