@@ -12,7 +12,7 @@ mod mapping;
 
 
 fn main() -> std::io::Result<()> {
-    let input = read_to_string("../rspegen.gram")?;
+    let input = read_to_string("../meta.gram")?;
     let v = true;
 
     let grammar = Parser {

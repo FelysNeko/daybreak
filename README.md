@@ -1,4 +1,4 @@
- # PEGParser
+# PEGParser
 
 A generated PEG grammar parser
 
@@ -22,7 +22,7 @@ pip3 install maturin
 maturin develop --manifest-path binding/Cargo.toml
 ```
 
-Then run `python3 boot.py update` will update the three files in [parser/src](parser/src) based on [rspegen.gram](rspegen.gram). You can configure the constants in [boot.py](boot.py) to change the target folder and grammar file location. If the update failed, you may want to use `python3 boot.py debug` to see all the parsing result verbosely. The pink logs represent a cache hit. Lastly, run `python3 boot.py init` to generate the whole [parser](parser) cargo with all dependencies. Again configure the constants to adjust its behaviour.
+Then run `python3 boot.py update` will update the three files in [parser/src](parser/src) based on [meta.gram](meta.gram). You can configure the constants in [boot.py](boot.py) to change the target folder and grammar file location. If the update failed, you may want to use `python3 boot.py debug` to see all the parsing result verbosely. The pink logs represent a cache hit. Lastly, run `python3 boot.py init` to generate the whole [parser](parser) cargo with all dependencies. Again configure the constants to adjust its behaviour.
 
 ## Appendix
 
@@ -39,4 +39,3 @@ Distributed under the terms of the [MIT License](LICENSE).
 ## Copyright
 
 © All rights reserved by FelysNeko
-

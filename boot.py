@@ -1,5 +1,5 @@
 TARGET = 'parser'
-DOTGRAM = 'rspegen.gram'
+DOTGRAM = 'meta.gram'
 
 def debug_rspegen():
     import binding
