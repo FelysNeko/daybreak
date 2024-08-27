@@ -1,8 +1,17 @@
- # RsPEGen
+ # PEGParser
 
-PEG parser generator for multiple languages. 
+A generated PEG grammar parser
 
-## Setup
+## Usage
+
+The following command will parse the grammar file that generates itself and output an `ast.json`.
+
+```sh
+cd parser
+cargo run
+```
+
+## Dev Setup
 
 Prerequisite: Python and Rust environment installed
 
@@ -13,21 +22,7 @@ pip3 install maturin
 maturin develop --manifest-path binding/Cargo.toml
 ```
 
-Then run `python3 boot.py update` will update the three files in [parser/src](parser/src) based on [rspegen.gram](rspegen.gram). You can configure the constants in [boot.py](boot.py) to change the target folder and grammar file location. If the update failed, you may want to use `python3 boot.py debug` to see all the parsing result verbosely. The pink logs represent a cache hit. Lastly, run `python3 boot.py init` to generate to the whole [parser](parser) cargo with all dependencies. Again configure the constants to adjust its behaviour.
-
-To see whether things get compiled, run:
-
-```sh
-cargo run --manifest-path parser/Cargo.toml
-```
-
-**NOTE**: you don't need `--manifest-path <PATH>` if you don't bother `cd` into directories.
-
-## Todo
-
-Only the the parser AST is now ready to go. More python scripts are needed to generate actual code that make this parser work. The mini parser generator is not powerful nor flexible enough, and does not bootstrap.
-
-Or simple re-implement the whole project, since there are quite a few immature designs.
+Then run `python3 boot.py update` will update the three files in [parser/src](parser/src) based on [rspegen.gram](rspegen.gram). You can configure the constants in [boot.py](boot.py) to change the target folder and grammar file location. If the update failed, you may want to use `python3 boot.py debug` to see all the parsing result verbosely. The pink logs represent a cache hit. Lastly, run `python3 boot.py init` to generate the whole [parser](parser) cargo with all dependencies. Again configure the constants to adjust its behaviour.
 
 ## Appendix
 
