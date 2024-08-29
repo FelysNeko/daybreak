@@ -5,6 +5,7 @@ import json
 
 CLAIM = '// automatically generated from templates'
 
+
 class Generator:
     def __init__(self, peg, file: Optional[IO[Text]] = None) -> None:
         self.json = json.loads(peg.json)
@@ -13,7 +14,8 @@ class Generator:
         self.level = 0
 
     @abstractmethod
-    def generate(self) -> None: ...
+    def generate(self) -> None:
+        ...
 
     @contextmanager
     def indent(self, n: int = 1) -> Iterator[None]:

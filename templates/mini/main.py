@@ -1,6 +1,7 @@
 from typing import IO
 from templates.shared import CLAIM, Generator
 
+
 class Main(Generator):
     __prelude = '''
 use crate::mapping::*;
@@ -51,7 +52,6 @@ fn main() -> std::io::Result<()> {
         with self.indent():
             self.grammar(self.json)
         self.print('}')
-
 
     def grammar(self, grammar: dict) -> None:
         for rule in grammar['rules']:
@@ -105,9 +105,9 @@ fn main() -> std::io::Result<()> {
         if a := atom.get('String'):
             print(f'self.expect("{a}")?;', file=self.file)
         elif a := atom.get('Name'):
-            if a=='STRING' or a=='INLINE' or a=='NAME':
+            if a == 'STRING' or a == 'INLINE' or a == 'NAME':
                 print(f'self.{a.lower()}()?;', file=self.file)
-            else: 
+            else:
                 print(f'self.{a}()?;', file=self.file)
         else:
             raise

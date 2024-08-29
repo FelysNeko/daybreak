@@ -1,31 +1,33 @@
+import argparse
+import binding
+import pathlib
+import subprocess
+from templates import mini
+
 TARGET = 'parser'
 DOTGRAM = 'meta.gram'
 
+
 def debug_rspegen():
-    import binding
     with open(DOTGRAM) as file:
         grammar = file.read()
     binding.parse(grammar, True)
 
 
 def init_rspegen():
-    import binding
     with open(DOTGRAM) as file:
         grammar = file.read()
     peg = binding.parse(grammar, False)
 
-    import pathlib
     target = pathlib.Path(TARGET)
     src = target.joinpath('src')
     cargo = target.joinpath('Cargo.toml')
 
-    import subprocess
     subprocess.run(['cargo', 'init', target])
     subprocess.run(['cargo', 'add', 'colored', '--manifest-path', cargo])
     subprocess.run(['cargo', 'add', 'serde', '--features', 'derive', '--manifest-path', cargo])
     subprocess.run(['cargo', 'add', 'serde_json', '--manifest-path', cargo])
 
-    from templates import mini
     with open(src.joinpath('main.rs'), 'w') as f:
         mini.Main(peg, f).generate()
     with open(src.joinpath('mapping.rs'), 'w') as f:
@@ -35,16 +37,13 @@ def init_rspegen():
 
 
 def update_rspegen():
-    import binding
     with open(DOTGRAM) as file:
         grammar = file.read()
     peg = binding.parse(grammar, False)
 
-    import pathlib
     target = pathlib.Path(TARGET)
     src = target.joinpath('src')
 
-    from templates import mini
     with open(src.joinpath('main.rs'), 'w') as f:
         mini.Main(peg, f).generate()
     with open(src.joinpath('mapping.rs'), 'w') as f:
@@ -53,17 +52,15 @@ def update_rspegen():
         mini.Stable(peg, f).generate()
 
 
-import argparse
-argp = argparse.ArgumentParser(description='Parser Generator') 
-subparsers = argp.add_subparsers(dest='command')
+parser = argparse.ArgumentParser(description='Parser Generator')
+subparsers = parser.add_subparsers(dest='command')
 
 subparsers.add_parser('init')
 subparsers.add_parser('debug')
 subparsers.add_parser('update')
 
-
 if __name__ == '__main__':
-    args = argp.parse_args()
+    args = parser.parse_args()
     if args.command == 'init':
         init_rspegen()
     elif args.command == 'debug':

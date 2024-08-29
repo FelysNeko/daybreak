@@ -1,5 +1,6 @@
-from typing import IO, Text
+from typing import IO
 from templates.shared import CLAIM, Generator
+
 
 class Mapping(Generator):
     __prelude = '''
