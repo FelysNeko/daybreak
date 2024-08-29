@@ -1,6 +1,6 @@
 # The Base Case
 
-This file describes the parser in the ./src folder. The intuition is to use this mini peg parser to generate a fully functional peg parser. Note that this parser does not parse itself.
+This file describes the parser in the ./src folder. The intuition is to use this mini peg parser to generate a fully functional peg parser. Note that this parser does not parse itself, and this grammar file is not actuate.
 
 ```
 grammar[Grammar]:
@@ -127,5 +127,4 @@ target_atom[str]:
     | STRING { string.string }
     | "?" { "?" }
     | ":" { ":" }
-
 ```
