@@ -7,7 +7,7 @@ grammar[Grammar]:
     | insert NEWLINE rule (NEWLINE rule)* EOF { Grammar { rules } }
 
 insert[Insert]:
-    | "```" INLINE "```" NEWLINE { Insert { inline } }
+    | "QUOTATION" "QUOTATION" STRING "QUOTATION" "QUOTATION" NEWLINE { Insert { inline } }
 
 rule[Rule]:
     | NAME RSTYPE ": " alter NEWLINE {
