@@ -1,6 +1,6 @@
 # PEGParser
 
-A generated PEG grammar parser.
+A generated cpython style PEG grammar parser.
 
 ## Usage
 
