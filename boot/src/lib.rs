@@ -68,7 +68,7 @@ impl Parser {
             None
         })
     }
-    
+
     fn rule(&mut self) -> Option<Rule> {
         let origin = self.stream.cursor;
         memoize!(self, CacheType::Rule, CacheResult::Rule, Rule, {

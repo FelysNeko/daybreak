@@ -1,7 +1,7 @@
+import json
 from abc import abstractmethod
 from contextlib import contextmanager
 from typing import IO, Iterator, Optional, Text
-import json
 
 CLAIM = '// automatically generated from templates'
 

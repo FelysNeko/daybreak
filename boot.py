@@ -1,7 +1,9 @@
 import argparse
-import binding
 import pathlib
 import subprocess
+
+import binding
+
 from templates import mini
 
 TARGET = 'parser'

@@ -1,4 +1,5 @@
 from typing import IO
+
 from templates.shared import CLAIM, Generator
 
 
