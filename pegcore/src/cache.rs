@@ -1,11 +1,11 @@
 use std::collections::HashMap;
-use std::fmt::Display;
+use std::fmt::{Debug, Display};
 use std::hash::Hash;
 
 pub struct Cache<CT, CR>
 where
-    CT: Display + Hash + PartialEq + Eq + Clone + Copy,
-    CR: Display + Clone,
+    CT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
+    CR: Display + Debug + Clone,
 {
     pub(crate) body: HashMap<(usize, CT), (usize, CR)>,
     pub(crate) verbose: Verbose,
@@ -14,8 +14,8 @@ where
 
 impl<CT, CR> Cache<CT, CR>
 where
-    CT: Display + Hash + PartialEq + Eq + Clone + Copy,
-    CR: Display + Clone,
+    CT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
+    CR: Display + Debug + Clone,
 {
     pub fn get(&mut self, pos: usize, ct: CT) -> Option<(usize, CR)> {
         let cache = self.body.get(&(pos, ct));

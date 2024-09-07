@@ -1,13 +1,13 @@
 use crate::cache::{Cache, Verbose};
 use crate::stream::Stream;
 use std::collections::HashMap;
-use std::fmt::Display;
+use std::fmt::{Debug, Display};
 use std::hash::Hash;
 
 pub struct Parser<CT, CR>
 where
-    CT: Display + Hash + PartialEq + Eq + Clone + Copy,
-    CR: Display + Clone,
+    CT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
+    CR: Display + Debug + Clone,
 {
     pub stream: Stream,
     pub cache: Cache<CT, CR>,
@@ -15,8 +15,8 @@ where
 
 impl<CT, CR> Parser<CT, CR>
 where
-    CT: Display + Hash + PartialEq + Eq + Clone + Copy,
-    CR: Display + Clone,
+    CT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
+    CR: Display + Debug + Clone,
 {
     pub fn new(code: String, v: Verbose) -> Self {
         Self {
