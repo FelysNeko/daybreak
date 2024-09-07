@@ -32,7 +32,7 @@ where
             },
         }
     }
-    
+
     pub fn expect(&mut self, s: &'static str) -> Option<&'static str> {
         let pos = self.stream.mark();
         for ch in s.chars() {

@@ -2,5 +2,5 @@ mod cache;
 mod stream;
 mod parser;
 
-pub use parser::Parser;
 pub use cache::Verbose;
+pub use parser::Parser;
