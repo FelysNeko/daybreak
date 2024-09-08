@@ -8,6 +8,7 @@ pub fn memoize(meta: TokenStream, body: TokenStream) -> TokenStream {
     let meta = parse_macro_input!(meta as Meta);
     let body = parse_macro_input!(body as ItemFn);
 
+    let attrs = &body.attrs;
     let signature = &body.sig;
     let rt = &signature.output;
     let block = &body.block;
@@ -50,6 +51,7 @@ pub fn memoize(meta: TokenStream, body: TokenStream) -> TokenStream {
     };
 
     quote!(
+        #(#attrs)*
         #vis #signature {
             #fast
             #store
@@ -62,6 +64,7 @@ pub fn lecursion(meta: TokenStream, body: TokenStream) -> TokenStream {
     let meta = parse_macro_input!(meta as Meta);
     let body = parse_macro_input!(body as ItemFn);
 
+    let attrs = &body.attrs;
     let signature = &body.sig;
     let rt = &signature.output;
     let block = &body.block;
@@ -105,6 +108,7 @@ pub fn lecursion(meta: TokenStream, body: TokenStream) -> TokenStream {
     };
 
     quote!(
+        #(#attrs)*
         #[memoize(#cache)]
         #vis #signature {
             #main
@@ -199,5 +203,25 @@ pub fn ast(_: TokenStream, body: TokenStream) -> TokenStream {
     quote!(
         #[derive(Debug, Clone)]
         #body
+    ).into()
+}
+
+#[proc_macro_attribute]
+pub fn unraw(_: TokenStream, body: TokenStream) -> TokenStream {
+    let body = parse_macro_input!(body as ItemFn);
+
+    let attrs = &body.attrs;
+    let signature = &body.sig;
+    let rt = &signature.output;
+    let block = &body.block;
+    let vis = &body.vis;
+    
+    quote!(
+        #(#attrs)*
+        #vis #signature {
+            let __r_res = || #rt #block ();
+            self.stream.raw(false);
+            __r_res
+        }
     ).into()
 }

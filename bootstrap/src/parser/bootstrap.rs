@@ -148,6 +148,7 @@ impl Bootstrap for Parser<CacheType, CacheResult> {
         None
     }
 
+    #[unraw]
     #[memoize(PegString)]
     fn peg_string(&mut self) -> Option<PegString> {
         let pos = self.stream.mark();
@@ -162,15 +163,14 @@ impl Bootstrap for Parser<CacheType, CacheResult> {
             self.peg_expect("\"")?;
             Some(string)
         }() {
-            self.stream.raw(false);
             return Some(result);
         } else {
-            self.stream.raw(false);
             self.stream.jump(pos)
         }
         None
     }
 
+    #[unraw]
     #[memoize(PegName)]
     fn peg_name(&mut self) -> Option<PegName> {
         let pos = self.stream.mark();
@@ -183,10 +183,8 @@ impl Bootstrap for Parser<CacheType, CacheResult> {
             }
             Some(string)
         }() {
-            self.stream.raw(false);
             return Some(result);
         } else {
-            self.stream.raw(false);
             self.stream.jump(pos)
         }
         None
