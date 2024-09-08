@@ -30,16 +30,64 @@ impl Bootstrap for Parser<CacheType, CacheResult> {
 
     #[memoize(PegAtom)]
     fn peg_atom(&mut self) -> Option<PegAtom> {
-        todo!()
+        let pos = self.stream.mark();
+        if let Some(result) = || -> Option<PegAtom> {
+            let name = self.peg_name()?;
+            Some(PegAtom::Name(name))
+        }() {
+            return Some(result);
+        } else {
+            self.stream.jump(pos)
+        }
+        if let Some(result) = || -> Option<PegAtom> {
+            let string = self.peg_string()?;
+            Some(PegAtom::Name(string))
+        }() {
+            return Some(result);
+        } else {
+            self.stream.jump(pos)
+        }
+        None
     }
 
     #[memoize(PegString)]
     fn peg_string(&mut self) -> Option<PegString> {
-        todo!()
+        let pos = self.stream.mark();
+        if let Some(result) = || -> Option<PegString> {
+            self.peg_expect("\"")?;
+            self.stream.raw(true);
+            let mut string = String::new();
+            while self.lookahead(|c| c != '"').is_some() {
+                let ch = self.stream.next()?;
+                string.push(ch)
+            }
+            self.peg_expect("\"")?;
+            Some(string)
+        }() {
+            self.stream.raw(false);
+            return Some(result);
+        } else {
+            self.stream.raw(false);
+            self.stream.jump(pos)
+        }
+        None
     }
 
     #[memoize(PegName)]
     fn peg_name(&mut self) -> Option<PegName> {
-        todo!()
+        let pos = self.stream.mark();
+        if let Some(result) = || -> Option<PegName> {
+            let first = self.scan(|c| c.is_ascii_alphabetic())?;
+            let mut string = String::from(first);
+            while let Some(ch) = self.scan(|c| c.is_ascii_alphanumeric()) {
+                string.push(ch)
+            }
+            Some(string)
+        }() {
+            return Some(result);
+        } else {
+            self.stream.jump(pos)
+        }
+        None
     }
 }

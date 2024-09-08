@@ -6,8 +6,7 @@ use pegcore::*;
 use register::*;
 
 fn main() {
-    let code = "Foo".to_string();
-    let v =Verbose::Core;
-    let mut peg = Parser::<CacheType, CacheResult>::new(code, v);
-    todo!()
+    let code = r#"Foo: "hello" \ "world""#.to_string();
+    let v =Verbose::Full;
+    Parser::<CacheType, CacheResult>::new(code, v).peg_atom();
 }
