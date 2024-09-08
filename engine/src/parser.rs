@@ -4,21 +4,21 @@ use std::collections::HashMap;
 use std::fmt::{Debug, Display};
 use std::hash::Hash;
 
-pub struct Parser<CT, CR>
+pub struct Parser<'a, CT, CR>
 where
     CT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
     CR: Display + Debug + Clone,
 {
-    pub stream: Stream,
+    pub stream: Stream<'a>,
     pub cache: Cache<CT, CR>,
 }
 
-impl<CT, CR> Parser<CT, CR>
+impl<'a, CT, CR> Parser<'a, CT, CR>
 where
     CT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
     CR: Display + Debug + Clone,
 {
-    pub fn new(code: String, v: Verbose) -> Self {
+    pub fn new(code: &'a str) -> Self {
         Self {
             stream: Stream {
                 body: code,
@@ -27,10 +27,14 @@ where
             },
             cache: Cache {
                 body: HashMap::new(),
-                verbose: v,
+                verbose: Verbose::Core,
                 hit: 0,
             },
         }
+    }
+
+    pub fn v(&mut self, v: Verbose) {
+        self.cache.verbose = v
     }
 
     pub fn expect(&mut self, s: &'static str) -> Option<&'static str> {

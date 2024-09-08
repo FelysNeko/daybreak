@@ -46,7 +46,7 @@ where
     }
 }
 
-#[derive(PartialOrd, PartialEq)]
+#[derive(PartialOrd, PartialEq, Copy, Clone)]
 pub enum Verbose {
     None,
     Core,

@@ -1,5 +1,5 @@
-pub struct Stream {
-    pub(crate) body: String,
+pub struct Stream<'a> {
+    pub(crate) body: &'a str,
     pub(crate) cursor: usize,
     pub(crate) strict: bool,
 }

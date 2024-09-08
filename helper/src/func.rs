@@ -106,7 +106,7 @@ pub fn lecursion_helper(meta: TokenStream, body: TokenStream) -> TokenStream {
 
     quote!(
         #(#attrs)*
-        #[::pegmacro::memoize(#cache)]
+        #[::helper::memoize(#cache)]
         #vis #signature {
             #main
         }
