@@ -33,7 +33,7 @@ pub fn memoize(meta: TokenStream, body: TokenStream) -> TokenStream {
 
     let fast = quote! {
         let __m_pos = self.stream.mark();
-        let __m_cache_type = ElyCacheType::#cache #args;
+        let __m_cache_type = Self::CT::#cache #args;
         if let Some(__m_cache) = self.cache.get(__m_pos, __m_cache_type) {
             let (__m_end, __m_cache_result) = __m_cache;
             self.stream.jump(__m_end);
@@ -43,7 +43,7 @@ pub fn memoize(meta: TokenStream, body: TokenStream) -> TokenStream {
 
     let store = quote! {
         let __m_result = || #rt #block();
-        let __m_cache_result = crate::ast::ElyCacheResult::#cache(__m_result.clone());
+        let __m_cache_result = Self::CR::#cache(__m_result.clone());
         let __m_end = self.stream.mark();
         self.cache.insert(__m_pos, __m_cache_type, __m_end, __m_cache_result);
         __m_result
@@ -64,9 +64,6 @@ pub fn lecursion(meta: TokenStream, body: TokenStream) -> TokenStream {
     todo!()
 }
 
-/// Derive all the traits that are needed for the cache system, and its field
-/// `Option<Value>` must match the function signature args when it has `memoize`
-/// or `lecursion` attribute.
 #[proc_macro_attribute]
 pub fn indicator(_: TokenStream, body: TokenStream) -> TokenStream {
     let body = parse_macro_input!(body as ItemEnum);
@@ -74,6 +71,7 @@ pub fn indicator(_: TokenStream, body: TokenStream) -> TokenStream {
     let ident = &body.ident;
 
     quote!(
+        #[allow(clippy::enum_variant_names)]
         #[derive(std::fmt::Debug, std::hash::Hash, PartialEq, Eq, Clone, Copy)]
         #body
         impl std::fmt::Display for #ident {
@@ -84,11 +82,7 @@ pub fn indicator(_: TokenStream, body: TokenStream) -> TokenStream {
     ).into()
 }
 
-/// Each variant must be in this format `Variant(Option<Value>)`, and You
-/// must implement `Display` trait for all `Value`, since it is required for
-/// effective cache logging. (abstract syntax tree is usually very verbose)
 #[proc_macro_attribute]
-#[allow(clippy::never_loop)]
 pub fn output(_: TokenStream, body: TokenStream) -> TokenStream {
     let body = parse_macro_input!(body as ItemEnum);
 
@@ -137,6 +131,7 @@ pub fn output(_: TokenStream, body: TokenStream) -> TokenStream {
     });
 
     quote!(
+        #[allow(clippy::enum_variant_names)]
         #[derive(Debug, Clone)]
         #body
         #(#from)*
@@ -147,5 +142,14 @@ pub fn output(_: TokenStream, body: TokenStream) -> TokenStream {
                 }
             }
         }
+    ).into()
+}
+
+#[proc_macro_attribute]
+pub fn ast(_: TokenStream, body: TokenStream) -> TokenStream {
+    let body = proc_macro2::TokenStream::from(body);
+    quote!(
+        #[derive(Debug, Clone)]
+        #body
     ).into()
 }
