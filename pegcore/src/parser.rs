@@ -57,9 +57,9 @@ where
     }
 
     pub fn lookahead(&mut self, filter: fn(char) -> bool) -> Option<char> {
-        let pos = self.stream.mark();
-        let saw = self.stream.next().unwrap_or('\0');
-        self.stream.jump(pos);
+        let saw = self.stream.body.chars()
+            .nth(self.stream.cursor)
+            .unwrap_or('\0');
         if filter(saw) {
             Some(saw)
         } else {

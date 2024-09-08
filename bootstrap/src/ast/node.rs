@@ -12,19 +12,23 @@ pub struct PegRule {
 }
 
 #[ast]
-pub struct PegAlter {
-    pub items: Vec<PegItem>,
+pub enum PegAlter {
+    Rec {
+        prior: Box<PegAlter>,
+        lower: PegItem,
+    },
+    Plain(PegItem),
 }
 
 #[ast]
 pub enum PegItem {
     Nested(PegUnnamedRule),
-    Atomic(PegAtom),
     PositiveLookahead(Box<PegItem>),
     NegativeLookahead(Box<PegItem>),
     NoneOrMore(Box<PegItem>),
     OnceOrMore(Box<PegItem>),
     Optional(Box<PegItem>),
+    Atomic(PegAtom),
     Cut,
 }
 

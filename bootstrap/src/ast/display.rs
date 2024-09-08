@@ -27,13 +27,13 @@ impl Display for PegRule {
 
 impl Display for PegAlter {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let s = self
-            .items
-            .iter()
-            .map(|x| x.to_string())
-            .collect::<Vec<String>>()
-            .join(" ");
-        write!(f, "{}", s)
+        match self {
+            PegAlter::Rec {
+                prior,
+                lower
+            } => write!(f, "{} {}", prior, lower),
+            PegAlter::Plain(x) => write!(f, "{}", x)
+        }
     }
 }
 

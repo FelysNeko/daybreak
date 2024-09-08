@@ -61,7 +61,55 @@ pub fn memoize(meta: TokenStream, body: TokenStream) -> TokenStream {
 pub fn lecursion(meta: TokenStream, body: TokenStream) -> TokenStream {
     let meta = parse_macro_input!(meta as Meta);
     let body = parse_macro_input!(body as ItemFn);
-    todo!()
+
+    let signature = &body.sig;
+    let rt = &signature.output;
+    let block = &body.block;
+    let vis = &body.vis;
+
+    let path = &meta
+        .require_path_only().expect("meta.require_path_only()")
+        .segments;
+    let cache = &path.first().expect("path.first()").ident;
+
+    let mut pa = signature.inputs.iter()
+        .filter_map(|x| match x {
+            FnArg::Typed(PatType { pat, .. }) => Some(pat),
+            _ => None
+        })
+        .peekable();
+
+    let args = if pa.peek().is_some() {
+        quote! { (#(#pa),*) }
+    } else {
+        quote! {}
+    };
+
+    let main = quote! {
+        let __l_pos = self.stream.mark();
+        let __l_cache_type = Self::CT::#cache #args;
+        let mut __l_cache_result = Self::CR::#cache(None);
+        let mut __l_end = __l_pos;
+        loop {
+            self.cache.insert(__l_pos, __l_cache_type, __l_end, __l_cache_result.clone());
+            let __l_res = || #rt #block();
+            if __l_end < self.stream.mark() {
+                __l_cache_result = Self::CR::#cache(__l_res);
+                __l_end = self.stream.mark();
+                self.stream.jump(__l_pos);
+            } else {
+                self.stream.jump(__l_end);
+                break __l_cache_result.into();
+            }
+        }
+    };
+
+    quote!(
+        #[memoize(#cache)]
+        #vis #signature {
+            #main
+        }
+    ).into()
 }
 
 #[proc_macro_attribute]
