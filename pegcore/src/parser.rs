@@ -23,7 +23,7 @@ where
             stream: Stream {
                 body: code,
                 cursor: 0,
-                raw: false,
+                strict: false,
             },
             cache: Cache {
                 body: HashMap::new(),
@@ -34,15 +34,22 @@ where
     }
 
     pub fn expect(&mut self, s: &'static str) -> Option<&'static str> {
-        let pos = self.stream.mark();
-        for ch in s.chars() {
-            let n = self.stream.next();
-            if !matches!(n, Some(d) if d == ch) {
-                self.stream.jump(pos);
-                return None;
-            }
+        let mut sc = s.chars();
+        if self.stream.next() != sc.next() {
+            return None;
         }
-        Some(s)
+        self.stream.strict(true);
+        let result = || -> Option<&'static str> {
+            for ch in sc {
+                let ns = self.stream.next()?;
+                if ns != ch {
+                    return None;
+                }
+            }
+            Some(s)
+        }();
+        self.stream.strict(false);
+        result
     }
 
     pub fn scan(&mut self, filter: fn(char) -> bool) -> Option<char> {
@@ -57,9 +64,9 @@ where
     }
 
     pub fn lookahead(&mut self, filter: fn(char) -> bool) -> Option<char> {
-        let saw = self.stream.body.chars()
-            .nth(self.stream.cursor)
-            .unwrap_or('\0');
+        let pos = self.stream.mark();
+        let saw = self.stream.next().unwrap_or('\0');
+        self.stream.jump(pos);
         if filter(saw) {
             Some(saw)
         } else {

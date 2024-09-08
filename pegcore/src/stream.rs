@@ -1,7 +1,7 @@
 pub struct Stream {
     pub(crate) body: String,
     pub(crate) cursor: usize,
-    pub(crate) raw: bool,
+    pub(crate) strict: bool,
 }
 
 impl Stream {
@@ -13,8 +13,8 @@ impl Stream {
         self.cursor = pos
     }
 
-    pub fn raw(&mut self, s: bool) {
-        self.raw = s
+    pub fn strict(&mut self, s: bool) {
+        self.strict = s
     }
 }
 
@@ -24,7 +24,7 @@ impl Iterator for Stream {
         let it = self.body.chars().skip(self.cursor);
         for ch in it {
             self.cursor += 1;
-            if self.raw || !ch.is_whitespace() {
+            if self.strict || !ch.is_whitespace() {
                 return Some(ch);
             }
         }

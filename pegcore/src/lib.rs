@@ -4,4 +4,3 @@ mod parser;
 
 pub use cache::Verbose;
 pub use parser::Parser;
-pub use pegmacro::*;
