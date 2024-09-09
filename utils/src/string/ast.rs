@@ -1,6 +1,6 @@
 use std::fmt::{Display, Formatter};
 
-#[helper::ast]
+#[packrat::ast]
 pub enum PegString {
     Raw(String),
     Plain(Vec<PegChar>),
@@ -21,7 +21,7 @@ impl Display for PegString {
     }
 }
 
-#[helper::ast]
+#[packrat::ast]
 pub enum PegChar {
     Plain(char),
     Backlash,

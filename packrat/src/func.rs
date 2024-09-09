@@ -52,7 +52,7 @@ pub fn memoize_helper(meta: TokenStream, body: TokenStream) -> TokenStream {
 
     quote!(
         #(#attrs)*
-        #[::helper::strict]
+        #[::packrat::strict]
         #vis #signature {
             #fast
             #store
@@ -110,7 +110,7 @@ pub fn lecursion_helper(meta: TokenStream, body: TokenStream) -> TokenStream {
 
     quote!(
         #(#attrs)*
-        #[::helper::memoize(#cache)]
+        #[::packrat::memoize(#cache)]
         #vis #signature {
             #main
         }

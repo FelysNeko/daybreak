@@ -5,5 +5,5 @@ edition = "2021"
 
 [dependencies]
 engine = { path = "../engine" }
-helper = { path = "../helper" }
+packrat = { path = "../packrat" }
 utils = { path = "../utils" }
