@@ -15,8 +15,8 @@ where
 {
     let mut parser = other.export();
     let result = parser.peg_string()?;
-    let mark = parser.stream.mark();
-    other.stream.jump(mark);
+    let pos = parser.stream.mark();
+    other.stream.jump(pos);
     Some(result)
 }
 
