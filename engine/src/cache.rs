@@ -7,7 +7,7 @@ where
     CT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
     CR: Display + Debug + Clone,
 {
-    pub(crate) body: HashMap<(usize, CT), (usize, CR)>,
+    pub(crate) body: HashMap<(usize, bool, CT), (usize, CR)>,
     pub(crate) verbose: Verbose,
     pub(crate) hit: usize,
 }
@@ -17,8 +17,8 @@ where
     CT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
     CR: Display + Debug + Clone,
 {
-    pub fn get(&mut self, pos: usize, ct: CT) -> Option<(usize, CR)> {
-        let cache = self.body.get(&(pos, ct));
+    pub fn get(&mut self, pos: usize, s: bool, ct: CT) -> Option<(usize, CR)> {
+        let cache = self.body.get(&(pos, s, ct));
         if let Some((end, cr)) = cache {
             if self.verbose >= Verbose::Core {
                 println!("> hit\t\t{:<11} {:<23} {:<11} {}", pos, ct.to_string(), end, cr)
@@ -33,11 +33,11 @@ where
         }
     }
 
-    pub fn insert(&mut self, pos: usize, ct: CT, end: usize, cr: CR) {
+    pub fn insert(&mut self, pos: usize, s: bool, ct: CT, end: usize, cr: CR) {
         if self.verbose >= Verbose::Core {
             println!("> cache\t\t{:<11} {:<23} {:<11} {}", pos, ct.to_string(), end, cr)
         }
-        if let Some(cache) = self.body.insert((pos, ct), (end, cr)) {
+        if let Some(cache) = self.body.insert((pos, s, ct), (end, cr)) {
             let (end, cr) = cache;
             if self.verbose >= Verbose::Core {
                 println!("> drop\t\t{:<11} {:<23} {:<11} {}", pos, ct.to_string(), end, cr)

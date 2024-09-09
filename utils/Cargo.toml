@@ -1,9 +1,8 @@
 [package]
-name = "bootstrap"
+name = "utils"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 engine = { path = "../engine" }
 helper = { path = "../helper" }
-utils = { path = "../utils" }

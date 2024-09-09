@@ -32,8 +32,9 @@ pub fn memoize_helper(meta: TokenStream, body: TokenStream) -> TokenStream {
 
     let fast = quote! {
         let _m_pos = self.stream.mark();
+        let _m_strict = self.stream.mode();
         let _m_cache_type = Self::CT::#cache #args;
-        if let Some(_m_cache) = self.cache.get(_m_pos, _m_cache_type) {
+        if let Some(_m_cache) = self.cache.get(_m_pos, _m_strict, _m_cache_type) {
             let (_m_end, _m_cache_result) = _m_cache;
             self.stream.jump(_m_end);
             return _m_cache_result.into()
@@ -44,7 +45,8 @@ pub fn memoize_helper(meta: TokenStream, body: TokenStream) -> TokenStream {
         let _m_result = || #rt #block();
         let _m_cache_result = Self::CR::#cache(_m_result.clone());
         let _m_end = self.stream.mark();
-        self.cache.insert(_m_pos, _m_cache_type, _m_end, _m_cache_result);
+        let _m_strict = self.stream.mode();
+        self.cache.insert(_m_pos, _m_strict, _m_cache_type, _m_end, _m_cache_result);
         _m_result
     };
 
@@ -91,7 +93,8 @@ pub fn lecursion_helper(meta: TokenStream, body: TokenStream) -> TokenStream {
         let mut _l_cache_result = Self::CR::#cache(None);
         let mut _l_end = _l_pos;
         loop {
-            self.cache.insert(_l_pos, _l_cache_type, _l_end, _l_cache_result.clone());
+            let _l_strict = self.stream.mode();
+            self.cache.insert(_l_pos, _l_strict, _l_cache_type, _l_end, _l_cache_result.clone());
             let _l_res = || #rt #block();
             if _l_end < self.stream.mark() {
                 _l_cache_result = Self::CR::#cache(_l_res);

@@ -42,6 +42,7 @@ where
         if self.stream.next() != sc.next() {
             return None;
         }
+        let prev = self.stream.mode();
         self.stream.strict(true);
         let result = || -> Option<&'static str> {
             for ch in sc {
@@ -52,7 +53,7 @@ where
             }
             Some(s)
         }();
-        self.stream.strict(false);
+        self.stream.strict(prev);
         result
     }
 
@@ -75,6 +76,31 @@ where
             Some(saw)
         } else {
             None
+        }
+    }
+}
+
+impl<CT, CR> Parser<'_, CT, CR>
+where
+    CT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
+    CR: Display + Debug + Clone,
+{
+    pub fn export<OCT, OCR>(&self) -> Parser<OCT, OCR>
+    where
+        OCT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
+        OCR: Display + Debug + Clone,
+    {
+        Parser {
+            stream: Stream {
+                body: self.stream.body,
+                cursor: self.stream.cursor,
+                strict: self.stream.strict,
+            },
+            cache: Cache {
+                body: HashMap::new(),
+                verbose: self.cache.verbose,
+                hit: 0,
+            },
         }
     }
 }
