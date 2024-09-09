@@ -22,11 +22,6 @@ pub fn strict(meta: TokenStream, body: TokenStream) -> TokenStream {
 }
 
 #[proc_macro_attribute]
-pub fn loose(meta: TokenStream, body: TokenStream) -> TokenStream {
-    loose_helper(meta, body)
-}
-
-#[proc_macro_attribute]
 pub fn index(meta: TokenStream, body: TokenStream) -> TokenStream {
     index_helper(meta, body)
 }

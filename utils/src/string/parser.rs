@@ -11,11 +11,15 @@ impl Text for Parser<'_, CacheType, CacheResult> {
     #[helper::memoize(PegString)]
     fn peg_string(&mut self) -> Option<PegString> {
         let pos = self.stream.mark();
+        let mut cut = false;
         if let Some(result) = || -> Option<PegString> {
-            self.expect("r\"")?;
+            self.expect("r")?;
+            self.stream.strict(true);
+            cut = true;
+            self.expect("\"")?;
             let mut string = String::new();
             while self.lookahead(|c| c != '"').is_some() {
-                let ch = self.scan(|_| true)?;
+                let ch = self.stream.next()?;
                 string.push(ch)
             }
             self.expect("\"")?;
@@ -25,7 +29,22 @@ impl Text for Parser<'_, CacheType, CacheResult> {
         } else {
             self.stream.jump(pos)
         }
-        self.peg_char()?;
+        if cut { return None; }
+        if let Some(result) = || -> Option<PegString> {
+            self.expect("\"")?;
+            self.stream.strict(true);
+            let mut string = Vec::new();
+            while self.lookahead(|c| c != '"').is_some() {
+                let ch = self.peg_char()?;
+                string.push(ch)
+            }
+            self.expect("\"")?;
+            Some(PegString::Plain(string))
+        }() {
+            return Some(result);
+        } else {
+            self.stream.jump(pos)
+        }
         None
     }
 
@@ -74,7 +93,7 @@ impl Text for Parser<'_, CacheType, CacheResult> {
         }
         if let Some(result) = || -> Option<PegChar> {
             self.expect("\\t")?;
-            Some(PegChar::Newline)
+            Some(PegChar::Tab)
         }() {
             return Some(result);
         } else {

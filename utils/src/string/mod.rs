@@ -22,6 +22,6 @@ where
 
 #[test]
 fn test() {
-    let mut x = Parser::<bool, bool>::new(r#"r" d\ d""#);
+    let mut x = Parser::<i32, i32>::new(r#"" d\td""#);
     parse(&mut x);
 }

@@ -13,26 +13,11 @@ where
     pub cache: Cache<CT, CR>,
 }
 
-impl<'a, CT, CR> Parser<'a, CT, CR>
+impl<CT, CR> Parser<'_, CT, CR>
 where
     CT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
     CR: Display + Debug + Clone,
 {
-    pub fn new(code: &'a str) -> Self {
-        Self {
-            stream: Stream {
-                body: code,
-                cursor: 0,
-                strict: false,
-            },
-            cache: Cache {
-                body: HashMap::new(),
-                verbose: Verbose::Core,
-                hit: 0,
-            },
-        }
-    }
-
     pub fn v(&mut self, v: Verbose) {
         self.cache.verbose = v
     }
@@ -80,11 +65,26 @@ where
     }
 }
 
-impl<CT, CR> Parser<'_, CT, CR>
+impl<'a, CT, CR> Parser<'a, CT, CR>
 where
     CT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
     CR: Display + Debug + Clone,
 {
+    pub fn new(code: &'a str) -> Self {
+        Self {
+            stream: Stream {
+                body: code,
+                cursor: 0,
+                strict: false,
+            },
+            cache: Cache {
+                body: HashMap::new(),
+                verbose: Verbose::Core,
+                hit: 0,
+            },
+        }
+    }
+
     pub fn export<OCT, OCR>(&self) -> Parser<OCT, OCR>
     where
         OCT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
