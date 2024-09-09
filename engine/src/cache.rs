@@ -21,13 +21,13 @@ where
         let cache = self.body.get(&(pos, s, ct));
         if let Some((end, cr)) = cache {
             if self.verbose >= Verbose::Core {
-                println!("> hit\t\t{:<11} {:<23} {:<11} {}", pos, ct.to_string(), end, cr)
+                println!("> hit\t\t{:<11} {:<11} {:<23} {:<11} {}", pos, s, ct.to_string(), end, cr)
             }
             self.hit += 1;
             cache.cloned()
         } else {
             if self.verbose >= Verbose::Full {
-                println!("> miss\t\t{:<11} {:<23}", pos, ct.to_string())
+                println!("> miss\t\t{:<11} {:<11} {:<23}", pos, s, ct.to_string())
             }
             None
         }
@@ -35,12 +35,12 @@ where
 
     pub fn insert(&mut self, pos: usize, s: bool, ct: CT, end: usize, cr: CR) {
         if self.verbose >= Verbose::Core {
-            println!("> cache\t\t{:<11} {:<23} {:<11} {}", pos, ct.to_string(), end, cr)
+            println!("> cache\t\t{:<11} {:<11} {:<23} {:<11} {}", pos, s, ct.to_string(), end, cr)
         }
         if let Some(cache) = self.body.insert((pos, s, ct), (end, cr)) {
             let (end, cr) = cache;
             if self.verbose >= Verbose::Core {
-                println!("> drop\t\t{:<11} {:<23} {:<11} {}", pos, ct.to_string(), end, cr)
+                println!("> drop\t\t{:<11} {:<11} {:<23} {:<11} {}", pos, s, ct.to_string(), end, cr)
             }
         }
     }

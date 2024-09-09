@@ -8,6 +8,7 @@ impl Base for Parser<'_, CacheType, CacheResult> {
 }
 
 impl Text for Parser<'_, CacheType, CacheResult> {
+    #[packrat::strict]
     #[packrat::memoize(PegString)]
     fn peg_string(&mut self) -> Option<PegString> {
         let pos = self.stream.mark();
@@ -30,6 +31,7 @@ impl Text for Parser<'_, CacheType, CacheResult> {
             self.stream.jump(pos)
         }
         if cut { return None; }
+        self.stream.strict(false);
         if let Some(result) = || -> Option<PegString> {
             self.expect("\"")?;
             self.stream.strict(true);

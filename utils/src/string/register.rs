@@ -17,7 +17,6 @@ pub trait Base {
     type CR;
 }
 
-
 pub trait Text: Base {
     fn peg_string(&mut self) -> Option<PegString>;
     fn peg_char(&mut self) -> Option<PegChar>;

@@ -52,7 +52,6 @@ pub fn memoize_helper(meta: TokenStream, body: TokenStream) -> TokenStream {
 
     quote!(
         #(#attrs)*
-        #[::packrat::strict]
         #vis #signature {
             #fast
             #store
