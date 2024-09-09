@@ -1,6 +1,8 @@
 # PEG Library
 
-Currently rebuilding this project.
+A lightweight macro-based library that helps build reusable packrat parsers with support for left recursion.
+
+I'm recently re-writing this project...
 
 ## License
 
