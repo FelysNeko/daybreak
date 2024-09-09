@@ -22,6 +22,14 @@ where
 
 #[test]
 fn test() {
-    let mut x = Parser::<i32, i32>::new(r#"" d\td""#);
-    parse(&mut x);
+    let cases = [
+        (r#""elysia""#, r#""elysia""#),
+    ];
+    
+    for (case, expect) in cases {
+        let mut x = Parser::<i32, i32>::new(case);
+        let result = parse(&mut x).unwrap().to_string();
+        assert_eq!(expect, result.as_str());
+        assert_eq!(x.stream.mark(), case.len())
+    }
 }
