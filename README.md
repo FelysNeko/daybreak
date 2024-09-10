@@ -1,6 +1,8 @@
-# PEG Library
+# Daybreak
 
 A lightweight macro-based framework that helps build reusable packrat parsers with support for left recursion.
+
+Why daybreak? because `「旭光」之后便是满天的「繁星」`.
 
 ## Usage
 
