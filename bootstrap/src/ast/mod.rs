@@ -1,2 +1,2 @@
-mod node;
-mod display;
+pub mod node;
+pub mod display;

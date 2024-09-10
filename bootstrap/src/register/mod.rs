@@ -1,2 +1,2 @@
-mod cache;
-mod method;
+pub mod cache;
+pub mod method;

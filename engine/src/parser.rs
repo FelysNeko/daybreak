@@ -23,16 +23,19 @@ where
     }
 
     pub fn expect(&mut self, s: &'static str) -> Option<&'static str> {
+        let prev = self.stream.mode();
+        let pos = self.stream.mark();
         let mut sc = s.chars();
         if self.stream.next() != sc.next() {
+            self.stream.jump(pos);
             return None;
         }
-        let prev = self.stream.mode();
         self.stream.strict(true);
         let result = || -> Option<&'static str> {
             for ch in sc {
                 let ns = self.stream.next()?;
                 if ns != ch {
+                    self.stream.jump(pos);
                     return None;
                 }
             }

@@ -1,4 +1,4 @@
-use crate::name::ast::PegName;
+pub use crate::name::ast::PegName;
 use crate::name::register::Name;
 use engine::Parser;
 use std::fmt::{Debug, Display};
@@ -25,7 +25,7 @@ fn test() {
     let cases = [
         ("elysia", "elysia"),
     ];
-    
+
     for (case, expect) in cases {
         let mut x = Parser::<i32, i32>::new(case);
         let result = parse(&mut x).unwrap().to_string();

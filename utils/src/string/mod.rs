@@ -1,4 +1,4 @@
-use crate::string::ast::PegString;
+pub use crate::string::ast::PegString;
 use crate::string::register::Text;
 use engine::Parser;
 use std::fmt::{Debug, Display};
