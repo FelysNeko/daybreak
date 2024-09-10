@@ -5,8 +5,7 @@ use syn::{parse_macro_input, FnArg, ItemFn, Meta, PatType};
 pub fn memoize_helper(meta: TokenStream, body: TokenStream) -> TokenStream {
     let meta = parse_macro_input!(meta as Meta);
     let body = parse_macro_input!(body as ItemFn);
-
-    let attrs = &body.attrs;
+    
     let signature = &body.sig;
     let rt = &signature.output;
     let block = &body.block;
@@ -51,7 +50,6 @@ pub fn memoize_helper(meta: TokenStream, body: TokenStream) -> TokenStream {
     };
 
     quote!(
-        #(#attrs)*
         #vis #signature {
             #fast
             #store
@@ -62,8 +60,7 @@ pub fn memoize_helper(meta: TokenStream, body: TokenStream) -> TokenStream {
 pub fn lecursion_helper(meta: TokenStream, body: TokenStream) -> TokenStream {
     let meta = parse_macro_input!(meta as Meta);
     let body = parse_macro_input!(body as ItemFn);
-
-    let attrs = &body.attrs;
+    
     let signature = &body.sig;
     let rt = &signature.output;
     let block = &body.block;
@@ -108,7 +105,6 @@ pub fn lecursion_helper(meta: TokenStream, body: TokenStream) -> TokenStream {
     };
 
     quote!(
-        #(#attrs)*
         #[::packrat::memoize(#cache)]
         #vis #signature {
             #main
