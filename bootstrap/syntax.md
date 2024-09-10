@@ -3,7 +3,7 @@
 ```
 grammar: identified+
 
-identified: name ":" "\"? rule
+identified: name ":" "\"? rule "\n"
 
 rule: 
     \ rule "\" alter

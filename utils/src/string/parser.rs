@@ -19,8 +19,7 @@ impl Text for Parser<'_, CacheType, CacheResult> {
             cut = true;
             self.expect("\"")?;
             let mut string = String::new();
-            while self.lookahead(|c| c != '"').is_some() {
-                let ch = self.stream.next()?;
+            while let Some(ch) = self.scan(|c| c != '"') {
                 string.push(ch)
             }
             self.expect("\"")?;
