@@ -14,20 +14,16 @@ alter:
     \ item
     
 item:
-    \ "(" ~ rule ")"
-    \ item "+"
-    \ item "*"
-    \ item "?"
-    \ "&" ~ item
-    \ "!" ~ item
+    \ atom "+"
+    \ atom "*"
+    \ atom "?"
+    \ "&" ~ atom
+    \ "!" ~ atom
     \ "~"
-    \ atomic
+    \ atom
     
-atomic:
-    \ string
-    \ name
-    
-string: "\"" CHAR* "\""
-
-name: CHAR CHAR*
+atom:
+    \ "(" ~ rule ")"
+    \ STRING
+    \ NAME
 ```
