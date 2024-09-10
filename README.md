@@ -6,7 +6,7 @@ Why daybreak? because `「旭光」之后便是满天的「繁星」`.
 
 ## Usage
 
-There will be a CLI the generate the project skeleton for you in the future. For now, just refer to the [bootstrap](bootstrap) for main parser structure and [utils](utils) for sub-parsers structure. This project is yet to be registered to crates.io, but will be soon.
+There will be a CLI to generate the project skeleton for you in the future. For now, just refer to the [bootstrap](bootstrap) for main parser structure and [utils](utils) for sub-parsers structure. This project is yet to be registered to crates.io, but will be soon.
 
 By the way, [bootstrap](bootstrap) does not actually bootstrap itself, because the code generation is not implemented and will not be implemented.
 
