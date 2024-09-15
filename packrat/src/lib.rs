@@ -22,7 +22,7 @@ pub fn strict(meta: TokenStream, body: TokenStream) -> TokenStream {
 }
 
 #[proc_macro_attribute]
-pub fn index2(meta: TokenStream, body: TokenStream) -> TokenStream {
+pub fn ct(meta: TokenStream, body: TokenStream) -> TokenStream {
     cache_type_helper(meta, body)
 }
 
