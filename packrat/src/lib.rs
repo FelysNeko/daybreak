@@ -22,13 +22,12 @@ pub fn strict(meta: TokenStream, body: TokenStream) -> TokenStream {
 }
 
 #[proc_macro_attribute]
-pub fn index(meta: TokenStream, body: TokenStream) -> TokenStream {
-    index_helper(meta, body)
+pub fn ct(meta: TokenStream, body: TokenStream) -> TokenStream {
+    cache_type_helper(meta, body)
 }
 
 #[proc_macro_attribute]
-pub fn output(meta: TokenStream, body: TokenStream) -> TokenStream {
-    output_helper(meta, body)
+pub fn cr(meta: TokenStream, body: TokenStream) -> TokenStream { cache_result_helper(meta, body)
 }
 
 #[proc_macro_attribute]

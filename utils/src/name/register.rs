@@ -1,11 +1,11 @@
 use crate::name::ast::PegName;
 
-#[packrat::index]
+#[packrat::ct]
 pub enum CacheType {
     PegName,
 }
 
-#[packrat::output]
+#[packrat::cr]
 pub enum CacheResult {
     PegName(Option<PegName>)
 }

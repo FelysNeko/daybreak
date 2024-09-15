@@ -2,11 +2,14 @@ use proc_macro::TokenStream;
 use proc_macro2::Ident;
 use quote::{quote, ToTokens};
 use std::collections::HashMap;
-use syn::{parse_macro_input, Field, Fields, ItemEnum};
+use syn::{parse_macro_input, Field, Fields, ItemEnum, ItemStruct};
 
-pub fn index_helper(_: TokenStream, body: TokenStream) -> TokenStream {
+pub fn cache_type_helper(_: TokenStream, body: TokenStream) -> TokenStream {
+    if let Ok(body) = syn::parse::<ItemStruct>(body.clone()) {
+        return cache_type_struct(body);
+    }
+
     let body = parse_macro_input!(body as ItemEnum);
-
     let ident = &body.ident;
 
     quote!(
@@ -21,9 +24,25 @@ pub fn index_helper(_: TokenStream, body: TokenStream) -> TokenStream {
     ).into()
 }
 
-pub fn output_helper(_: TokenStream, body: TokenStream) -> TokenStream {
-    let body = parse_macro_input!(body as ItemEnum);
+fn cache_type_struct(body: ItemStruct) -> TokenStream {
+    let ident = &body.ident;
+    quote!(
+        #[derive(std::fmt::Debug, std::hash::Hash, PartialEq, Eq, Clone, Copy)]
+        #body
+        impl std::fmt::Display for #ident {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                write!(f, "{:?}", self)
+            }
+        }
+    ).into()
+}
 
+pub fn cache_result_helper(_: TokenStream, body: TokenStream) -> TokenStream {
+    if let Ok(body) = syn::parse::<ItemStruct>(body.clone()) {
+        return cache_result_struct(body);
+    }
+
+    let body = parse_macro_input!(body as ItemEnum);
     let variants = &body.variants;
     let ident = &body.ident;
 
@@ -88,5 +107,18 @@ pub fn ast_helper(_: TokenStream, body: TokenStream) -> TokenStream {
     quote!(
         #[derive(Debug, Clone)]
         #body
+    ).into()
+}
+
+fn cache_result_struct(body: ItemStruct) -> TokenStream {
+    let ident = &body.ident;
+    quote!(
+        #[derive(Debug, Clone)]
+        #body
+        impl std::fmt::Display for #ident {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                write!(f, "{:?}", self)
+            }
+        }
     ).into()
 }
