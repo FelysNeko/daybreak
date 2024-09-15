@@ -27,7 +27,8 @@ pub fn ct(meta: TokenStream, body: TokenStream) -> TokenStream {
 }
 
 #[proc_macro_attribute]
-pub fn cr(meta: TokenStream, body: TokenStream) -> TokenStream { cache_result_helper(meta, body)
+pub fn cr(meta: TokenStream, body: TokenStream) -> TokenStream {
+    cache_result_helper(meta, body)
 }
 
 #[proc_macro_attribute]
