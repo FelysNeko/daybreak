@@ -5,9 +5,9 @@ use std::collections::HashMap;
 use syn::{parse_macro_input, Field, Fields, ItemEnum, ItemStruct};
 
 pub fn cache_type_helper(_: TokenStream, body: TokenStream) -> TokenStream {
-    if let Ok(body) = syn::parse::<ItemStruct>(body.clone()) {
-        return cache_type_struct(body);
-    }
+    // if let Ok(body) = syn::parse::<ItemStruct>(body.clone()) {
+    //     return cache_type_struct(body);
+    // }
 
     let body = parse_macro_input!(body as ItemEnum);
     let ident = &body.ident;
