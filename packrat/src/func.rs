@@ -105,7 +105,7 @@ pub fn lecursion_helper(meta: TokenStream, body: TokenStream) -> TokenStream {
     };
 
     quote!(
-        #[::packrat::memoize(#cache)]
+        #[::daybreak::memoize(#cache)]
         #vis #signature {
             #main
         }

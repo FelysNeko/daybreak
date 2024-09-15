@@ -1,12 +1,12 @@
 use crate::string::ast::{PegChar, PegString};
 
-#[packrat::ct]
+#[daybreak::ct]
 pub enum CacheType {
     PegString,
     PegChar,
 }
 
-#[packrat::cr]
+#[daybreak::cr]
 pub enum CacheResult {
     PegString(Option<PegString>),
     PegChar(Option<PegChar>),

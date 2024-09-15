@@ -1,7 +1,7 @@
 use crate::ast::node::{PegAlter, PegAtom, PegGrammar, PegIdentified, PegItem, PegRule};
 use crate::register::cache::{CacheResult, CacheType};
 use crate::register::method::Bootstrap;
-use engine::Parser;
+use daybreak::Parser;
 use utils::{name, string};
 
 impl Bootstrap for Parser<'_, CacheType, CacheResult> {
@@ -25,7 +25,7 @@ impl Bootstrap for Parser<'_, CacheType, CacheResult> {
         None
     }
 
-    #[packrat::memoize(PegIdentified)]
+    #[daybreak::memoize(PegIdentified)]
     fn peg_identified(&mut self) -> Option<PegIdentified> {
         let pos = self.stream.mark();
         if let Some(result) = || -> Option<PegIdentified> {
@@ -43,7 +43,7 @@ impl Bootstrap for Parser<'_, CacheType, CacheResult> {
         None
     }
 
-    #[packrat::lecursion(PegRule)]
+    #[daybreak::lecursion(PegRule)]
     fn peg_rule(&mut self) -> Option<PegRule> {
         let pos = self.stream.mark();
         if let Some(result) = || -> Option<PegRule> {
@@ -67,8 +67,8 @@ impl Bootstrap for Parser<'_, CacheType, CacheResult> {
         None
     }
 
-    #[packrat::strict]
-    #[packrat::lecursion(PegAlter)]
+    #[daybreak::strict]
+    #[daybreak::lecursion(PegAlter)]
     fn peg_alter(&mut self) -> Option<PegAlter> {
         let pos = self.stream.mark();
         if let Some(result) = || -> Option<PegAlter> {
@@ -95,7 +95,7 @@ impl Bootstrap for Parser<'_, CacheType, CacheResult> {
         None
     }
 
-    #[packrat::memoize(PegItem)]
+    #[daybreak::memoize(PegItem)]
     fn peg_item(&mut self) -> Option<PegItem> {
         let pos = self.stream.mark();
         let mut cut = false;
@@ -171,7 +171,7 @@ impl Bootstrap for Parser<'_, CacheType, CacheResult> {
         None
     }
 
-    #[packrat::memoize(PegAtom)]
+    #[daybreak::memoize(PegAtom)]
     fn peg_atom(&mut self) -> Option<PegAtom> {
         let pos = self.stream.mark();
         let mut cut = false;

@@ -1,6 +1,6 @@
 use crate::ast::node::{PegAlter, PegAtom, PegIdentified, PegItem, PegRule};
 
-#[packrat::ct]
+#[daybreak::ct]
 pub enum CacheType {
     PegAlter,
     PegAtom,
@@ -9,7 +9,7 @@ pub enum CacheType {
     PegRule,
 }
 
-#[packrat::cr]
+#[daybreak::cr]
 pub enum CacheResult {
     PegAlter(Option<PegAlter>),
     PegAtom(Option<PegAtom>),

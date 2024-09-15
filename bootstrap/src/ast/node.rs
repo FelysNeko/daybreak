@@ -1,18 +1,18 @@
 use utils::name::PegName;
 use utils::string::PegString;
 
-#[packrat::ast]
+#[daybreak::ast]
 pub struct PegGrammar {
     pub rules: Vec<PegIdentified>,
 }
 
-#[packrat::ast]
+#[daybreak::ast]
 pub struct PegIdentified {
     pub name: PegName,
     pub rule: PegRule,
 }
 
-#[packrat::ast]
+#[daybreak::ast]
 pub enum PegRule {
     Rec {
         left: Box<PegRule>,
@@ -21,7 +21,7 @@ pub enum PegRule {
     Plain(PegAlter),
 }
 
-#[packrat::ast]
+#[daybreak::ast]
 pub enum PegAlter {
     Rec {
         left: Box<PegAlter>,
@@ -30,7 +30,7 @@ pub enum PegAlter {
     Plain(PegItem),
 }
 
-#[packrat::ast]
+#[daybreak::ast]
 pub enum PegItem {
     OnceOrMore(PegAtom),
     ZeroOrMore(PegAtom),
@@ -41,7 +41,7 @@ pub enum PegItem {
     Cut,
 }
 
-#[packrat::ast]
+#[daybreak::ast]
 pub enum PegAtom {
     Parentheses(Box<PegRule>),
     String(PegString),

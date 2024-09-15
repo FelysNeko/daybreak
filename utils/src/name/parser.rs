@@ -1,7 +1,7 @@
 use crate::name::ast::PegName;
 use crate::name::register::Name;
 use crate::name::register::{Base, CacheResult, CacheType};
-use engine::Parser;
+use daybreak::Parser;
 
 impl Base for Parser<'_, CacheType, CacheResult> {
     type CT = CacheType;
@@ -9,8 +9,8 @@ impl Base for Parser<'_, CacheType, CacheResult> {
 }
 
 impl Name for Parser<'_, CacheType, CacheResult> {
-    #[packrat::strict]
-    #[packrat::memoize(PegName)]
+    #[daybreak::strict]
+    #[daybreak::memoize(PegName)]
     fn peg_name(&mut self) -> Option<PegName> {
         let pos = self.stream.mark();
         if let Some(result) = || -> Option<PegName> {

@@ -1,6 +1,6 @@
 use std::fmt::{Display, Formatter};
 
-#[packrat::ast]
+#[daybreak::ast]
 pub struct PegName {
     pub name: String,
 }

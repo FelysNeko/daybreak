@@ -1,6 +1,6 @@
 use crate::string::ast::{PegChar, PegString};
 use crate::string::register::{Base, CacheResult, CacheType, Text};
-use engine::Parser;
+use daybreak::Parser;
 
 impl Base for Parser<'_, CacheType, CacheResult> {
     type CT = CacheType;
@@ -8,8 +8,8 @@ impl Base for Parser<'_, CacheType, CacheResult> {
 }
 
 impl Text for Parser<'_, CacheType, CacheResult> {
-    #[packrat::strict]
-    #[packrat::memoize(PegString)]
+    #[daybreak::strict]
+    #[daybreak::memoize(PegString)]
     fn peg_string(&mut self) -> Option<PegString> {
         let pos = self.stream.mark();
         let mut cut = false;
@@ -49,7 +49,7 @@ impl Text for Parser<'_, CacheType, CacheResult> {
         None
     }
 
-    #[packrat::memoize(PegChar)]
+    #[daybreak::memoize(PegChar)]
     fn peg_char(&mut self) -> Option<PegChar> {
         let pos = self.stream.mark();
         if let Some(result) = || -> Option<PegChar> {
