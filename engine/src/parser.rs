@@ -4,6 +4,7 @@ use std::collections::HashMap;
 use std::fmt::{Debug, Display};
 use std::hash::Hash;
 
+/// The base parser that can be extended.
 pub struct Parser<'a, CT, CR>
 where
     CT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
@@ -18,10 +19,14 @@ where
     CT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
     CR: Display + Debug + Clone,
 {
+    /// Change the verbose level.
     pub fn v(&mut self, v: Verbose) {
         self.cache.verbose = v
     }
 
+    /// Expect a static string from the stream.
+    /// 
+    /// It runs under strict mode except for the first character.
     pub fn expect(&mut self, s: &'static str) -> Option<&'static str> {
         let mode = self.stream.mode();
         let pos = self.stream.mark();
@@ -45,6 +50,10 @@ where
         result
     }
 
+    /// Scan a character based on given closure.
+    /// 
+    /// `self.scan(|_| true)` is equivalent to `self.stream.next()`,
+    /// and the latter is preferred.
     pub fn scan(&mut self, filter: fn(char) -> bool) -> Option<char> {
         let pos = self.stream.mark();
         let saw = self.stream.next()?;
@@ -56,6 +65,9 @@ where
         }
     }
 
+    /// Lookahead without advancing the stream.
+    /// 
+    /// If the stream reaches the end, a `'\0'` will show up.
     pub fn lookahead(&mut self, filter: fn(char) -> bool) -> Option<char> {
         let pos = self.stream.mark();
         let saw = self.stream.next().unwrap_or('\0');
@@ -73,6 +85,7 @@ where
     CT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
     CR: Display + Debug + Clone,
 {
+    /// Build a new parser with given type generics.
     pub fn new(code: &'a str) -> Self {
         Self {
             stream: Stream {
@@ -88,6 +101,7 @@ where
         }
     }
 
+    /// Clone itself without the cache, and accept new type generics.
     pub fn export<OCT, OCR>(&self) -> Parser<OCT, OCR>
     where
         OCT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
