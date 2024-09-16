@@ -6,7 +6,7 @@ use func::*;
 
 use proc_macro::TokenStream;
 
-/// Cache the result after calling this method
+/// Cache the result after calling this method.
 ///
 /// Put `#[daybreak::memoize(AST)]` on top of the desired method,
 /// where `AST` must match `Option<AST>` in the function signature.
@@ -16,7 +16,7 @@ pub fn memoize(meta: TokenStream, body: TokenStream) -> TokenStream {
     memoize_helper(meta, body)
 }
 
-/// Allow potential left recursion and cache them
+/// Allow potential left recursion and cache them.
 /// 
 /// Refer to the usage of `daybreak::memoize`.
 /// It will use `#[daybreak::memoize(AST)]` to wrap the method first,
@@ -27,7 +27,7 @@ pub fn lecursion(meta: TokenStream, body: TokenStream) -> TokenStream {
     lecursion_helper(meta, body)
 }
 
-/// Ensure strict mode manipulation not affecting the outer methods
+/// Ensure strict mode manipulation not affecting the outer methods.
 /// 
 /// Put `#[daybreak::strict]` before `daybreak::memoize` or `daybreak::lecursion` if exists,
 /// and you can safely switch the strict mode inside this method.
@@ -37,7 +37,7 @@ pub fn strict(meta: TokenStream, body: TokenStream) -> TokenStream {
     strict_helper(meta, body)
 }
 
-/// Implement traits for cache type
+/// Implement traits for cache type.
 /// 
 /// Put `#[daybreak::ct]` on top of the cache type registry.
 /// Use `enum` if there is something to be cached,
@@ -47,7 +47,7 @@ pub fn ct(meta: TokenStream, body: TokenStream) -> TokenStream {
     cache_type_helper(meta, body)
 }
 
-/// Implement traits for cache result
+/// Implement traits for cache result.
 ///
 /// Refer to the usage of `daybreak::ct`.
 /// If `enum` is used, every variant must be in form of `Name(Option<AST>)`
@@ -58,7 +58,7 @@ pub fn cr(meta: TokenStream, body: TokenStream) -> TokenStream {
     cache_result_helper(meta, body)
 }
 
-/// Implement traits for ast
+/// Implement traits for ast.
 /// 
 /// Put `#[daybreak::ast]` on top of the abstract syntax tree node.
 /// However, you still need to manually implement the `Display` trait.
