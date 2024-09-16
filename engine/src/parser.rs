@@ -23,7 +23,7 @@ where
     }
 
     pub fn expect(&mut self, s: &'static str) -> Option<&'static str> {
-        let prev = self.stream.mode();
+        let mode = self.stream.mode();
         let pos = self.stream.mark();
         let mut sc = s.chars();
         if self.stream.next() != sc.next() {
@@ -41,7 +41,7 @@ where
             }
             Some(s)
         }();
-        self.stream.strict(prev);
+        self.stream.strict(mode);
         result
     }
 
@@ -58,7 +58,7 @@ where
 
     pub fn lookahead(&mut self, filter: fn(char) -> bool) -> Option<char> {
         let pos = self.stream.mark();
-        let saw = self.stream.next().unwrap_or('\0');
+        let saw = self.stream.next()?;
         self.stream.jump(pos);
         if filter(saw) {
             Some(saw)
