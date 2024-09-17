@@ -10,7 +10,6 @@ where
 {
     pub(crate) body: HashMap<(usize, bool, CT), (usize, CR)>,
     pub(crate) verbose: Verbose,
-    pub(crate) hit: usize,
 }
 
 impl<CT, CR> Cache<CT, CR>
@@ -30,7 +29,6 @@ where
             if self.verbose >= Verbose::Hit {
                 println!("> hit\t\t{:<11} {:<11} {:<23} {:<11} {}", pos, s, ct.to_string(), end, cr)
             }
-            self.hit += 1;
             cache.cloned()
         } else {
             if self.verbose >= Verbose::Miss {

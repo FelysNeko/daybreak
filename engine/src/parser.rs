@@ -26,7 +26,7 @@ where
     }
 
     /// Expect a static string from the stream.
-    /// 
+    ///
     /// It runs under strict mode except for the first character.
     pub fn expect(&mut self, s: &'static str) -> Option<&'static str> {
         let mode = self.stream.mode();
@@ -52,7 +52,7 @@ where
     }
 
     /// Scan a character based on given closure.
-    /// 
+    ///
     /// `self.scan(|_| true)` is equivalent to `self.stream.next()`,
     /// and the latter is preferred.
     pub fn scan(&mut self, filter: fn(char) -> bool) -> Option<char> {
@@ -67,7 +67,7 @@ where
     }
 
     /// Lookahead without advancing the stream.
-    /// 
+    ///
     /// If the stream reaches the end, a `'\0'` will show up.
     pub fn lookahead(&mut self, filter: fn(char) -> bool) -> Option<char> {
         let pos = self.stream.mark();
@@ -96,8 +96,7 @@ where
             },
             cache: Cache {
                 body: HashMap::new(),
-                verbose: Verbose::Cache,
-                hit: 0,
+                verbose: Verbose::Drop,
             },
         }
     }
@@ -117,7 +116,6 @@ where
             cache: Cache {
                 body: HashMap::new(),
                 verbose: self.cache.verbose,
-                hit: 0,
             },
         }
     }
