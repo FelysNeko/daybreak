@@ -18,41 +18,49 @@ where
     CT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
     CR: Display + Debug + Clone,
 {
+    /// Get the logging verboseness
+    pub fn verbose(&self) -> Verbose {
+        self.verbose
+    }
+    
     /// Try to get the cache result.
     pub fn get(&mut self, pos: usize, s: bool, ct: CT) -> Option<(usize, CR)> {
         let cache = self.body.get(&(pos, s, ct));
         if let Some((end, cr)) = cache {
-            if self.verbose >= Verbose::Core {
+            if self.verbose >= Verbose::Hit {
                 println!("> hit\t\t{:<11} {:<11} {:<23} {:<11} {}", pos, s, ct.to_string(), end, cr)
             }
             self.hit += 1;
             cache.cloned()
         } else {
-            if self.verbose >= Verbose::Full {
+            if self.verbose >= Verbose::Miss {
                 println!("> miss\t\t{:<11} {:<11} {:<23}", pos, s, ct.to_string())
             }
             None
         }
     }
-    
+
     /// Insert or update the cache result.
     pub fn insert(&mut self, pos: usize, s: bool, ct: CT, end: usize, cr: CR) {
-        if self.verbose >= Verbose::Core {
-            println!("> cache\t\t{:<11} {:<11} {:<23} {:<11} {}", pos, s, ct.to_string(), end, cr)
-        }
+        let crs = cr.to_string();
         if let Some(cache) = self.body.insert((pos, s, ct), (end, cr)) {
             let (end, cr) = cache;
-            if self.verbose >= Verbose::Core {
+            if self.verbose >= Verbose::Drop {
                 println!("> drop\t\t{:<11} {:<11} {:<23} {:<11} {}", pos, s, ct.to_string(), end, cr)
             }
+        }
+        if self.verbose >= Verbose::Cache {
+            println!("> cache\t\t{:<11} {:<11} {:<23} {:<11} {}", pos, s, ct.to_string(), end, crs)
         }
     }
 }
 
-/// Verboseness of the logging.
+/// Cache log verboseness.
 #[derive(PartialOrd, PartialEq, Copy, Clone)]
 pub enum Verbose {
-    None,
-    Core,
-    Full,
+    Off,
+    Cache,
+    Drop,
+    Hit,
+    Miss,
 }

@@ -20,8 +20,9 @@ where
     CR: Display + Debug + Clone,
 {
     /// Change the verbose level.
-    pub fn v(&mut self, v: Verbose) {
-        self.cache.verbose = v
+    pub fn v(mut self, v: Verbose) -> Self {
+        self.cache.verbose = v;
+        self
     }
 
     /// Expect a static string from the stream.
@@ -95,7 +96,7 @@ where
             },
             cache: Cache {
                 body: HashMap::new(),
-                verbose: Verbose::Core,
+                verbose: Verbose::Cache,
                 hit: 0,
             },
         }

@@ -1,6 +1,6 @@
 use crate::register::cache::{CacheResult, CacheType};
 use crate::register::method::Bootstrap;
-use daybreak::Parser;
+use daybreak::{Parser, Verbose};
 
 mod parser;
 mod register;
@@ -38,7 +38,8 @@ fn main() {
         \ NAME
         ;
     "#;
-    let mut x = Parser::<CacheType, CacheResult>::new(code);
+    let mut x = Parser::<CacheType, CacheResult>::new(code)
+        .v(Verbose::Drop);
     if let Some(grammar) = x.peg_grammar() {
         println!();
         println!("{}", grammar);
