@@ -4,12 +4,6 @@ A lightweight macro-based framework that helps build reusable packrat parsers wi
 
 Why daybreak? because `「旭光」之后便是满天的「繁星」`.
 
-## Usage
-
-There will be a CLI to generate the project skeleton in the future. For now, just refer to the [bootstrap](bootstrap) for main parser structure and [utils](utils) for sub-parsers structure. This project will not be registered to crates.io, as it is initially designed for future [felys](https://github.com/felys-lang/felys) front-end. There is partial implementation available in [felys-future](https://github.com/felys-lang/felys-future) which can parse expressions, but uses a different project structure (recommanded for complicated parser).
-
-By the way, [bootstrap](bootstrap) does not actually bootstrap itself, because the code generation is not implemented and will not be implemented.
-
 ## References
 
 This project is inspired by [pegen](https://github.com/python/cpython/tree/main/Tools/peg_generator) the new cpython parser, and the following links are some relevant resources.

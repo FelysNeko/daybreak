@@ -1,8 +1,0 @@
-[package]
-name = "bootstrap"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-daybreak = { path = "../" }
-utils = { path = "../utils" }
