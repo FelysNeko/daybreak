@@ -89,11 +89,3 @@ impl<'a, CR: Eq + Hash, CT: Clone> Parser<'a, CR, CT> {
         }
     }
 }
-
-
-#[test]
-fn test() {
-    let mut x = Parser::<i32, i32>::new(" 123 ");
-    x.expect("123");
-    println!("{} {}", x.stream.cursor, x.stream.strict)
-}
