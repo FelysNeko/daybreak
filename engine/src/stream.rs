@@ -1,14 +1,20 @@
 pub struct Stream<'a> {
     pub(crate) body: &'a str,
     pub cursor: usize,
+    pub strict: bool,
 }
 
 impl Iterator for Stream<'_> {
     type Item = char;
     fn next(&mut self) -> Option<Self::Item> {
-        let ch = self.body.chars().nth(self.cursor)?;
-        self.cursor += 1;
-        Some(ch)
+        let skipped = self.body.chars().skip(self.cursor);
+        for ch in skipped {
+            self.cursor += 1;
+            if self.strict || !ch.is_whitespace() {
+                return Some(ch);
+            }
+        }
+        None
     }
 }
 
