@@ -33,11 +33,7 @@ impl<CT: Eq + Hash, CR: Clone> Parser<'_, CT, CR> {
         let (res, cut) = self.alter(|x| {
             x.stream.trim();
             x.stream.strict = true;
-            if s.chars().all(|c| x.stream.next() == Some(c)) {
-                Some(s)
-            } else {
-                None
-            }
+            s.chars().all(|c| x.stream.next() == Some(c)).then_some(s)
         });
         if cut || res.is_some() {
             return res;
@@ -45,10 +41,7 @@ impl<CT: Eq + Hash, CR: Clone> Parser<'_, CT, CR> {
         None
     }
 
-    pub fn scan<F>(&mut self, filter: F) -> Option<char>
-    where
-        F: Fn(char) -> bool,
-    {
+    pub fn scan(&mut self, filter: fn(char) -> bool) -> Option<char> {
         let pos = self.stream.cursor;
         let saw = self.stream.next()?;
         if filter(saw) {
@@ -59,10 +52,7 @@ impl<CT: Eq + Hash, CR: Clone> Parser<'_, CT, CR> {
         }
     }
 
-    pub fn lookahead<F>(&mut self, filter: F) -> Option<char>
-    where
-        F: Fn(char) -> bool,
-    {
+    pub fn lookahead(&mut self, filter: fn(char) -> bool) -> Option<char> {
         let pos = self.stream.cursor;
         let saw = self.stream.next().unwrap_or('\0');
         self.stream.cursor = pos;
