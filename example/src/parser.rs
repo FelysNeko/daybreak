@@ -8,34 +8,171 @@ impl Base for Parser<'_, CT, CR> {
 }
 
 impl Syntax for Parser<'_, CT, CR> {
-    #[daybreak::memoize(Gram)]
     fn grammar(&mut self) -> Option<Gram> {
-        todo!()
+        let (res, cut) = self.alter(|x| {
+            let first = x.non_terminal()?;
+            let mut rules = vec![first];
+            while let Some(rule) = x.non_terminal() {
+                rules.push(rule)
+            }
+            if x.stream.next().is_some() {
+                return None;
+            }
+            Some(rules)
+        });
+        if cut || res.is_some() {
+            return res;
+        }
+        None
     }
-
-    #[daybreak::memoize(NonT)]
+    
     fn non_terminal(&mut self) -> Option<NonT> {
-        todo!()
+        let (res, cut) = self.alter(|x| {
+            let name = x.name()?;
+            x.expect(":")?;
+            x.expect("\\");
+            let rule = x.rule()?;
+            x.expect(";")?;
+            Some(NonT { name, rule })
+        });
+        if cut || res.is_some() {
+            return res;
+        }
+        None
     }
 
-    #[daybreak::memoize(Rule)]
+    #[daybreak::lecursion(Rule)]
     fn rule(&mut self) -> Option<Rule> {
-        todo!()
+        let (res, cut) = self.alter(|x| {
+            let mut left = x.rule()?;
+            x.expect("\\")?;
+            let right = x.alternative()?;
+            left.push(right);
+            Some(left)
+        });
+        if cut || res.is_some() {
+            return res;
+        }
+        let (res, cut) = self.alter(|x| {
+            let item = x.alternative()?;
+            Some(vec![item])
+        });
+        if cut || res.is_some() {
+            return res;
+        }
+        None
     }
 
-    #[daybreak::memoize(Alter)]
-    fn alter(&mut self) -> Option<Alter> {
-        todo!()
+    #[daybreak::lecursion(Alter)]
+    fn alternative(&mut self) -> Option<Alter> {
+        let (res, cut) = self.alter(|x| {
+            let mut left = x.alternative()?;
+            x.stream.strict = true;
+            x.expect(" ")?;
+            x.stream.strict = false;
+            let right = x.item()?;
+            left.push(right);
+            Some(left)
+        });
+        if cut || res.is_some() {
+            return res;
+        }
+        let (res, cut) = self.alter(|x| {
+            let item = x.item()?;
+            Some(vec![item])
+        });
+        if cut || res.is_some() {
+            return res;
+        }
+        None
     }
 
     #[daybreak::memoize(Item)]
     fn item(&mut self) -> Option<Item> {
-        todo!()
+        let (res, cut) = self.alter(|x| {
+            let atom = x.atom()?;
+            x.expect("+")?;
+            Some(Item::OnceOrMore(atom))
+        });
+        if cut || res.is_some() {
+            return res;
+        }
+        let (res, cut) = self.alter(|x| {
+            let atom = x.atom()?;
+            x.expect("*")?;
+            Some(Item::ZeroOrMore(atom))
+        });
+        if cut || res.is_some() {
+            return res;
+        }
+        let (res, cut) = self.alter(|x| {
+            let atom = x.atom()?;
+            x.expect("?")?;
+            Some(Item::Optional(atom))
+        });
+        if cut || res.is_some() {
+            return res;
+        }
+        let (res, cut) = self.alter(|x| {
+            x.expect("&")?;
+            let atom = x.atom()?;
+            Some(Item::PositiveLookahead(atom))
+        });
+        if cut || res.is_some() {
+            return res;
+        }
+        let (res, cut) = self.alter(|x| {
+            x.expect("!")?;
+            let atom = x.atom()?;
+            Some(Item::NegativeLookahead(atom))
+        });
+        if cut || res.is_some() {
+            return res;
+        }
+        let (res, cut) = self.alter(|x| {
+            x.expect("~")?;
+            Some(Item::Cut)
+        });
+        if cut || res.is_some() {
+            return res;
+        }
+        let (res, cut) = self.alter(|x| {
+            let atom = x.atom()?;
+            Some(Item::Plain(atom))
+        });
+        if cut || res.is_some() {
+            return res;
+        }
+        None
     }
 
     #[daybreak::memoize(Atom)]
     fn atom(&mut self) -> Option<Atom> {
-        todo!()
+        let (res, cut) = self.alter(|x| {
+            x.expect("(")?;
+            x.cut = true;
+            let rule = x.rule()?;
+            x.expect(")")?;
+            Some(Atom::Parentheses(Box::new(rule)))
+        });
+        if cut || res.is_some() {
+            return res;
+        }
+        let (res, cut) = self.alter(|x| {
+            let string = x.str()?;
+            Some(Atom::String(string))
+        });
+        if cut || res.is_some() {
+            return res;
+        }
+        let (res, cut) = self.alter(|x| {
+            let name = x.name()?;
+            Some(Atom::Name(name))
+        });
+        if cut || res.is_some() {
+            return res;
+        }
+        None
     }
 
     #[daybreak::memoize(Name)]
