@@ -25,7 +25,7 @@ impl Syntax for Parser<'_, CT, CR> {
         }
         None
     }
-    
+
     fn non_terminal(&mut self) -> Option<NonT> {
         let (res, cut) = self.alter(|x| {
             let name = x.name()?;
@@ -178,9 +178,8 @@ impl Syntax for Parser<'_, CT, CR> {
     #[daybreak::memoize(Name)]
     fn name(&mut self) -> Option<Name> {
         let (res, cut) = self.alter(|x| {
-            x.stream.trim();
-            x.stream.strict = true;
             let first = x.scan(|c| c.is_ascii_alphabetic())?;
+            x.stream.strict = true;
             let mut name = String::from(first);
             while let Some(ch) = x.scan(|c| c.is_ascii_alphanumeric()) {
                 name.push(ch)
@@ -196,9 +195,8 @@ impl Syntax for Parser<'_, CT, CR> {
     #[daybreak::memoize(Str)]
     fn str(&mut self) -> Option<Str> {
         let (res, cut) = self.alter(|x| {
-            x.stream.trim();
-            x.stream.strict = true;
             x.expect("r")?;
+            x.stream.strict = true;
             x.cut = true;
             x.expect("\"")?;
             let mut string = String::new();
@@ -212,9 +210,8 @@ impl Syntax for Parser<'_, CT, CR> {
             return res;
         }
         let (res, cut) = self.alter(|x| {
-            x.stream.trim();
-            x.stream.strict = true;
             x.expect("\"")?;
+            x.stream.strict = true;
             let mut string = Vec::new();
             while x.lookahead(|c| c != '"').is_some() {
                 let ch = x.char()?;

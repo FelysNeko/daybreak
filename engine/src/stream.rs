@@ -20,6 +20,9 @@ impl Iterator for Stream<'_> {
 
 impl Stream<'_> {
     pub fn trim(&mut self) {
+        if self.strict {
+            return;
+        }
         for ch in self.body.chars().skip(self.cursor) {
             if ch.is_whitespace() {
                 self.cursor += 1;

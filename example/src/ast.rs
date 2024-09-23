@@ -1,5 +1,6 @@
 pub type Gram = Vec<NonT>;
 
+#[allow(dead_code)]
 #[derive(Clone, Debug)]
 pub struct NonT {
     pub name: Name,
