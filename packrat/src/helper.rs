@@ -25,8 +25,8 @@ pub fn memoize_helper(meta: TokenStream, body: TokenStream) -> TokenStream {
             let pos = self.stream.cursor;
             let mode = self.stream.strict;
             let ct = Self::CT::#meta #args;
-            if let Some(cache) = self.cache.get(pos, mode, ct) {
-                let (end, cr) = cache;
+            if let Some(memo) = self.memo.get(pos, mode, ct) {
+                let (end, cr) = memo;
                 self.stream.cursor = end;
                 return cr.into()
             }
@@ -34,7 +34,7 @@ pub fn memoize_helper(meta: TokenStream, body: TokenStream) -> TokenStream {
             let ct = Self::CT::#meta #args;
             let end = self.stream.cursor;
             let cr = Self::CR::#meta(result.clone());
-            self.cache.insert(pos, mode, ct, end, cr);
+            self.memo.insert(pos, mode, ct, end, cr);
             result
         }
     ).into()
@@ -65,7 +65,7 @@ pub fn lecursion_helper(meta: TokenStream, body: TokenStream) -> TokenStream {
             loop {
                 let mode = self.stream.strict;
                 let ct = Self::CT::#meta #args;
-                self.cache.insert(pos, mode, ct, end, cr.clone());
+                self.memo.insert(pos, mode, ct, end, cr.clone());
                 let res = || #rt #block();
                 if end < self.stream.cursor {
                     cr = Self::CR::#meta(res);
