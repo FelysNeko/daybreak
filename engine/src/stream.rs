@@ -1,44 +1,34 @@
-/// Handwritten iterator for the character stream.
 pub struct Stream<'a> {
     pub(crate) body: &'a str,
-    pub(crate) cursor: usize,
-    pub(crate) strict: bool,
-}
-
-impl Stream<'_> {
-    /// Get the current position.
-    pub fn mark(&self) -> usize {
-        self.cursor
-    }
-
-    /// Cursor jump the given position.
-    pub fn jump(&mut self, pos: usize) {
-        self.cursor = pos
-    }
-    
-    /// Get the current strict mode.
-    pub fn mode(&mut self) -> bool {
-        self.strict
-    }
-
-    /// Toggle the strict mode.
-    pub fn strict(&mut self, s: bool) {
-        self.strict = s
-    }
+    pub cursor: usize,
+    pub strict: bool,
 }
 
 impl Iterator for Stream<'_> {
     type Item = char;
-    
-    /// Get the next char based on current strict mode.
     fn next(&mut self) -> Option<Self::Item> {
-        let it = self.body.chars().skip(self.cursor);
-        for ch in it {
+        let skipped = self.body.chars().skip(self.cursor);
+        for ch in skipped {
             self.cursor += 1;
             if self.strict || !ch.is_whitespace() {
                 return Some(ch);
             }
         }
         None
+    }
+}
+
+impl Stream<'_> {
+    pub fn trim(&mut self) {
+        if self.strict {
+            return;
+        }
+        for ch in self.body.chars().skip(self.cursor) {
+            if ch.is_whitespace() {
+                self.cursor += 1;
+            } else {
+                break;
+            }
+        }
     }
 }

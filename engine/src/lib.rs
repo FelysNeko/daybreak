@@ -1,8 +1,7 @@
-mod cache;
 mod stream;
+mod memo;
 mod parser;
 
-pub use cache::Verbose;
+pub use memo::Memo;
 pub use parser::Parser;
-pub use cache::Cache;
 pub use stream::Stream;

@@ -1,78 +1,61 @@
-use crate::cache::{Cache, Verbose};
+use crate::memo::Memo;
 use crate::stream::Stream;
 use std::collections::HashMap;
-use std::fmt::{Debug, Display};
 use std::hash::Hash;
 
-/// The base parser that can be extended.
-pub struct Parser<'a, CT, CR>
-where
-    CT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
-    CR: Display + Debug + Clone,
-{
+pub struct Parser<'a, CT: Eq + Hash, CR: Clone> {
     pub stream: Stream<'a>,
-    pub cache: Cache<CT, CR>,
+    pub memo: Memo<CT, CR>,
+    pub cut: bool,
 }
 
-impl<CT, CR> Parser<'_, CT, CR>
-where
-    CT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
-    CR: Display + Debug + Clone,
-{
-    /// Change the verbose level.
-    pub fn v(mut self, v: Verbose) -> Self {
-        self.cache.verbose = v;
-        self
-    }
+impl<CT: Eq + Hash, CR: Clone> Parser<'_, CT, CR> {
+    pub fn alter<T, F>(&mut self, f: F) -> (Option<T>, bool)
+    where
+        F: Fn(&mut Parser<CT, CR>) -> Option<T>,
+    {
+        self.cut = false;
+        let pos = self.stream.cursor;
+        let mode = self.stream.strict;
 
-    /// Expect a static string from the stream.
-    ///
-    /// It runs under strict mode except for the first character.
-    pub fn expect(&mut self, s: &'static str) -> Option<&'static str> {
-        let mode = self.stream.mode();
-        let pos = self.stream.mark();
-        let mut sc = s.chars();
-        if self.stream.next() != sc.next() {
-            self.stream.jump(pos);
-            return None;
+        let result = f(self);
+        let cut = self.cut;
+
+        self.cut = false;
+        if result.is_none() {
+            self.stream.cursor = pos;
         }
-        self.stream.strict(true);
-        let result = || -> Option<&'static str> {
-            for ch in sc {
-                let ns = self.stream.next()?;
-                if ns != ch {
-                    self.stream.jump(pos);
-                    return None;
-                }
-            }
-            Some(s)
-        }();
-        self.stream.strict(mode);
-        result
+        self.stream.strict = mode;
+        (result, cut)
     }
 
-    /// Scan a character based on given closure.
-    ///
-    /// `self.scan(|_| true)` is equivalent to `self.stream.next()`,
-    /// and the latter is preferred.
+    pub fn expect(&mut self, s: &'static str) -> Option<&'static str> {
+        let (res, cut) = self.alter(|x| {
+            x.stream.trim();
+            x.stream.strict = true;
+            s.chars().all(|c| x.stream.next() == Some(c)).then_some(s)
+        });
+        if cut || res.is_some() {
+            return res;
+        }
+        None
+    }
+
     pub fn scan(&mut self, filter: fn(char) -> bool) -> Option<char> {
-        let pos = self.stream.mark();
+        let pos = self.stream.cursor;
         let saw = self.stream.next()?;
         if filter(saw) {
             Some(saw)
         } else {
-            self.stream.jump(pos);
+            self.stream.cursor = pos;
             None
         }
     }
 
-    /// Lookahead without advancing the stream.
-    ///
-    /// If the stream reaches the end, a `'\0'` will show up.
     pub fn lookahead(&mut self, filter: fn(char) -> bool) -> Option<char> {
-        let pos = self.stream.mark();
+        let pos = self.stream.cursor;
         let saw = self.stream.next().unwrap_or('\0');
-        self.stream.jump(pos);
+        self.stream.cursor = pos;
         if filter(saw) {
             Some(saw)
         } else {
@@ -81,12 +64,7 @@ where
     }
 }
 
-impl<'a, CT, CR> Parser<'a, CT, CR>
-where
-    CT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
-    CR: Display + Debug + Clone,
-{
-    /// Build a new parser with given type generics.
+impl<'a, CR: Eq + Hash, CT: Clone> Parser<'a, CR, CT> {
     pub fn new(code: &'a str) -> Self {
         Self {
             stream: Stream {
@@ -94,29 +72,10 @@ where
                 cursor: 0,
                 strict: false,
             },
-            cache: Cache {
-                body: HashMap::new(),
-                verbose: Verbose::Drop,
+            memo: Memo {
+                body: HashMap::default(),
             },
-        }
-    }
-
-    /// Clone itself without the cache, and accept new type generics.
-    pub fn export<OCT, OCR>(&self) -> Parser<OCT, OCR>
-    where
-        OCT: Display + Debug + Hash + PartialEq + Eq + Clone + Copy,
-        OCR: Display + Debug + Clone,
-    {
-        Parser {
-            stream: Stream {
-                body: self.stream.body,
-                cursor: self.stream.cursor,
-                strict: self.stream.strict,
-            },
-            cache: Cache {
-                body: HashMap::new(),
-                verbose: self.cache.verbose,
-            },
+            cut: false,
         }
     }
 }
