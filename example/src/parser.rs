@@ -229,7 +229,7 @@ impl Syntax for Parser<'_, CT, CR> {
     fn char(&mut self) -> Option<Char> {
         let (res, cut) = self.alter(|x| {
             let ch = x.scan(|c| !matches!(c, '\\' | '\n' | '\t' | '\r' | '"'))?;
-            Some(Char::Plain(ch))
+            Some(Char::Ch(ch))
         });
         if cut || res.is_some() {
             return res;

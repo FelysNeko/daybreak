@@ -39,7 +39,7 @@ pub enum Str {
 
 #[derive(Clone, Debug)]
 pub enum Char {
-    Plain(char),
+    Ch(char),
     Backlash,
     Quotation,
     Newline,
