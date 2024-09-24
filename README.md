@@ -4,6 +4,10 @@ A lightweight macro-based framework that helps build reusable packrat parsers wi
 
 Why daybreak? because `「旭光」之后便是满天的「繁星」`.
 
+## Usage
+
+Refer to [example](example) for a full implementation that parses the meta syntax of packrat rules.
+
 ## References
 
 This project is inspired by [pegen](https://github.com/python/cpython/tree/main/Tools/peg_generator) the new cpython parser, and the following links are some relevant resources.
