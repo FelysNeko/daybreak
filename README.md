@@ -6,7 +6,7 @@ Why daybreak? because `「旭光」之后便是满天的「繁星」`.
 
 ## Usage
 
-Refer to [example](example) for a full implementation that parses the meta syntax of packrat rules. It is designed for future [felys](https://github.com/felys-lang/felys) syntax, so it is not registered to crates.io. Add the following to `Cargo.toml` to if you want to try it:
+Refer to [example](example) for a full implementation that parses the meta syntax of packrat rules. This project is designed for future [felys](https://github.com/felys-lang/felys) syntax, so this crate will not be registered to `crates.io`. Add the following to `Cargo.toml` if you want to try it:
 
 ```
 daybreak = { git = "https://github.com/FelysNeko/daybreak.git" }
